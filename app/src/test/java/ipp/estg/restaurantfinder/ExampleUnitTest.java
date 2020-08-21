@@ -1,4 +1,4 @@
-package com.example.restaurantfinder;
+package ipp.estg.restaurantfinder;
 
 import org.junit.Test;
 

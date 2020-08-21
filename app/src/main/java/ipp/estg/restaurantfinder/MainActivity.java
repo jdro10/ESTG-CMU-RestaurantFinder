@@ -1,8 +1,10 @@
-package com.example.restaurantfinder;
+package ipp.estg.restaurantfinder;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import ipp.estg.restaurantfinder.R;
 
 public class MainActivity extends AppCompatActivity {
 
