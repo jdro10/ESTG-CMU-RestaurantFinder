@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_selected"
+        android:text="Restaurant Selected"
+        android:gravity="center_horizontal"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/star1"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/star2"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/star3"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/star4"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/star5"/>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/restaurant_selected_image"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="4.0dp"
+        android:paddingTop="5.0dp"
+        android:paddingRight="4.0dp"
+        android:paddingBottom="1.0dp"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/check_menu_restaurant"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="MENU"
+            android:layout_weight="1.0" />
+
+        <Button
+            android:id="@+id/rate_restaurant_selected"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="RATE"
+            android:layout_weight="1.0" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comments"
+        android:layout_marginTop="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/classifications_restaurant_selected"
+        android:layout_height="wrap_content"/>
+
+
+</LinearLayout>
