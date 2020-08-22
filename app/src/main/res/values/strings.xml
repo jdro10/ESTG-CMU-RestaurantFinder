@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">RestaurantFinder</string>
+    <string name="person_name">Person Name</string>
+    <string name="person_rate">Person Rate</string>
+    <string name="comments">Comments about a restaurant that we all love</string>
+    <string name="word_comments">Comments</string>
+    <string name="rate">RATE</string>
+    <string name="menu">MENU</string>
+    <string name="restaurant_selected">Restaurant Selected</string>
 </resources>
