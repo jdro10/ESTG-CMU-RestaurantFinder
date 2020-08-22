@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RestaurantFinder</string>
+    <string name="login_email">Your email…</string>
+    <string name="login_password">Your password…</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign up</string>
 </resources>
