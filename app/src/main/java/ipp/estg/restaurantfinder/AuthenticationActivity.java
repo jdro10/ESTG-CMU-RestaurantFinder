@@ -3,6 +3,7 @@ package ipp.estg.restaurantfinder;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 public class AuthenticationActivity extends AppCompatActivity {
 
     private Button loginButton;
+    private Button signupButton;
     private TextView forgotPassword;
     private TextInputEditText loginEmail;
     private TextInputEditText loginPassword;
@@ -28,6 +30,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
+        signupButton = findViewById(R.id.signupButton);
         forgotPassword = findViewById(R.id.forgotPasswordTextView);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +44,14 @@ public class AuthenticationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 forgotPasswordDialog();
+            }
+        });
+
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signupIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                startActivity(signupIntent);
             }
         });
     }
