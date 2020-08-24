@@ -7,8 +7,11 @@
     <string name="rate">RATE</string>
     <string name="menu">MENU</string>
     <string name="restaurant_selected">Restaurant Selected</string>
-    <string name="login_email">Your email…</string>
-    <string name="login_password">Your password…</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
     <string name="login_button">Login</string>
     <string name="signup_button">Sign up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="new_password">New password</string>
+    <string name="sign_up_phrase">Sign up to Restaurant Finder!</string>
 </resources>
