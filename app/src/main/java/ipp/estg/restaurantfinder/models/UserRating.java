@@ -29,4 +29,13 @@ public class UserRating {
     public void setVotes(int votes) {
         this.votes = votes;
     }
+
+    @Override
+    public String toString() {
+        return "UserRating{" +
+                "aggregate_rating=" + aggregate_rating +
+                ", rating_text='" + rating_text + '\'' +
+                ", votes=" + votes +
+                '}';
+    }
 }

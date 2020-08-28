@@ -1,6 +1,8 @@
 package ipp.estg.restaurantfinder.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +52,9 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         call_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String number = "938725605";
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null));
+                context.startActivity(phoneIntent);
             }
         });
 

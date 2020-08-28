@@ -66,4 +66,17 @@ public class Restaurant {
     public void setUser_rating(UserRating user_rating) {
         this.user_rating = user_rating;
     }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", location=" + location +
+                ", currency='" + currency + '\'' +
+                ", feature_image='" + feature_image + '\'' +
+                ", user_rating=" + user_rating +
+                '}';
+    }
 }
