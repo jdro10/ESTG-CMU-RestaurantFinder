@@ -1,14 +1,13 @@
 package ipp.estg.restaurantfinder.models;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class ZomatoResponse {
+public class SearchRestaurantResponse {
 
     private int results_found;
     private int results_start;
     private int results_shown;
-    private List<Restaurant> restaurants;
+    private List<Object> restaurants;
 
     public int getResults_found() {
         return results_found;
@@ -34,11 +33,11 @@ public class ZomatoResponse {
         this.results_shown = results_shown;
     }
 
-    public List<Restaurant> getRestaurants() {
+    public List<Object> getRestaurants() {
         return restaurants;
     }
 
-    public void setRestaurants(List<Restaurant> restaurants) {
+    public void setRestaurants(List<Object> restaurants) {
         this.restaurants = restaurants;
     }
 

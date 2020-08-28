@@ -8,12 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
-import ipp.estg.restaurantfinder.models.Restaurant;
-import ipp.estg.restaurantfinder.models.ZomatoResponse;
+import ipp.estg.restaurantfinder.models.SearchRestaurantResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,18 +43,18 @@ public class MainActivity extends AppCompatActivity {
 
         ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
 
-        Call<Object> call = zomatoapi.getRestaurants();
+        Call<SearchRestaurantResponse> call = zomatoapi.getRestaurants();
 
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<SearchRestaurantResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<SearchRestaurantResponse> call, Response<SearchRestaurantResponse> response) {
                 if (response.isSuccessful()) {
-                    textView.setText(response.body() + "");
+                    textView.setText(response.body().getRestaurants().toString());
                 }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<SearchRestaurantResponse> call, Throwable t) {
                 textView.setText("erro");
             }
         });
