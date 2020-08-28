@@ -75,7 +75,7 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
         public TextView address , name;
         public Button call;
-        public ImageView photo;
+        public ImageView photo,favorite;
 
 
         public RestaurantViewHolder(@NonNull View itemView) {
@@ -85,6 +85,7 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
             name = itemView.findViewById(R.id.restaurant_name);
             photo = itemView.findViewById(R.id.restaurant_icon);
             call = itemView.findViewById(R.id.call_button);
+            favorite = itemView.findViewById(R.id.isFavoriteOrNot);
         }
     }
 }

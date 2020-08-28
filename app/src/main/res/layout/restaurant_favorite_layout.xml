@@ -36,14 +36,28 @@
 
     </LinearLayout>
 
-
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="CALL"
-        android:layout_marginHorizontal="50dp"
-        android:id="@+id/call_button"
-        />
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CALL"
+            android:id="@+id/call_button"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/isFavoriteOrNot"
+            android:src="@drawable/favorite"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
