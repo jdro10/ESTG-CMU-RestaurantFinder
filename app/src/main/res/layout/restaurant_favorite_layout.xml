@@ -43,6 +43,7 @@
         android:layout_marginTop="20dp"
         android:text="CALL"
         android:layout_marginHorizontal="50dp"
+        android:id="@+id/call_button"
         />
 
 </LinearLayout>
