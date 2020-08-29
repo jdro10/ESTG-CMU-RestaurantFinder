@@ -3,6 +3,7 @@ package ipp.estg.restaurantfinder.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +17,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ipp.estg.restaurantfinder.R;
-import ipp.estg.restaurantfinder.models.Restaurant;
+import ipp.estg.restaurantfinder.models.Restaurants;
 
-public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRestaurantAdapter.RestaurantViewHolder> {
+public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> {
 
     private Context context;
-    private List<Restaurant> restaurants;
+    private List<Restaurants> restaurants;
 
-    public FavoriteRestaurantAdapter(Context context, List<Restaurant> restaurants){
+    public RestaurantAdapter(Context context, List<Restaurants> restaurants){
         this.context = context;
         this.restaurants = restaurants;
     }
 
-
     @NonNull
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("teste", "teste");
 
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -39,24 +40,28 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         View restaurantView = inflater.inflate(R.layout.restaurant_favorite_layout, parent, false);
 
         return new RestaurantViewHolder (restaurantView);
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
 
-        final Restaurant restaurant = this.restaurants.get(position);
+        final Restaurants restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
 
         call_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String number = "938725605";
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null));
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurant.getRestaurant().getPhoneNumbers(), null));
                 context.startActivity(phoneIntent);
             }
         });
+
+        TextView nameTextView = holder.name;
+        TextView addressTextView = holder.address;
+
+        nameTextView.setText(restaurant.getRestaurant().getName());
+        addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
 
         /*holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,9 +69,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
             }
         });*/ //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
-
-
-
 
     }
 

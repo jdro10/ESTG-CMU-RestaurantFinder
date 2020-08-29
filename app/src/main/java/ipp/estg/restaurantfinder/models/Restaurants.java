@@ -1,7 +1,10 @@
 package ipp.estg.restaurantfinder.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Restaurants {
 
+    @SerializedName("restaurant")
     private Restaurant restaurant;
 
     public Restaurant getRestaurant() {
