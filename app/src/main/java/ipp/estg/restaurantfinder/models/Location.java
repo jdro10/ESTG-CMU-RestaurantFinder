@@ -5,18 +5,12 @@ public class Location {
     private String address;
     private String locality;
     private String city;
-    private float latitude;
-    private float longitude;
-    private int zipcode;
-
-    public Location(String address, String locality, String city, float latitude, float longitude, int zipcode) {
-        this.address = address;
-        this.locality = locality;
-        this.city = city;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.zipcode = zipcode;
-    }
+    private int city_id;
+    private String latitude;
+    private String longitude;
+    private String zipcode;
+    private int country_id;
+    private String locality_verbose;
 
     public String getAddress() {
         return address;
@@ -42,28 +36,52 @@ public class Location {
         this.city = city;
     }
 
-    public float getLatitude() {
+    public int getCity_id() {
+        return city_id;
+    }
+
+    public void setCity_id(int city_id) {
+        this.city_id = city_id;
+    }
+
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public int getZipcode() {
+    public String getZipcode() {
         return zipcode;
     }
 
-    public void setZipcode(int zipcode) {
+    public void setZipcode(String zipcode) {
         this.zipcode = zipcode;
+    }
+
+    public int getCountry_id() {
+        return country_id;
+    }
+
+    public void setCountry_id(int country_id) {
+        this.country_id = country_id;
+    }
+
+    public String getLocality_verbose() {
+        return locality_verbose;
+    }
+
+    public void setLocality_verbose(String locality_verbose) {
+        this.locality_verbose = locality_verbose;
     }
 
     @Override
@@ -72,9 +90,12 @@ public class Location {
                 "address='" + address + '\'' +
                 ", locality='" + locality + '\'' +
                 ", city='" + city + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", zipcode=" + zipcode +
+                ", city_id=" + city_id +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", country_id=" + country_id +
+                ", locality_verbose='" + locality_verbose + '\'' +
                 '}';
     }
 }
