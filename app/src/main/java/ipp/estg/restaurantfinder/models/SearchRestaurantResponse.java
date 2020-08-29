@@ -4,49 +4,49 @@ import java.util.List;
 
 public class SearchRestaurantResponse {
 
-    private int results_found;
-    private int results_start;
-    private int results_shown;
-    private List<Object> restaurants;
+    private String results_found;
+    private String reuslts_start;
+    private String results_shown;
+    private List<Restaurants> restaurants;
 
-    public int getResults_found() {
+    public String getResults_found() {
         return results_found;
     }
 
-    public void setResults_found(int results_found) {
+    public void setResults_found(String results_found) {
         this.results_found = results_found;
     }
 
-    public int getResults_start() {
-        return results_start;
+    public String getReuslts_start() {
+        return reuslts_start;
     }
 
-    public void setResults_start(int results_start) {
-        this.results_start = results_start;
+    public void setReuslts_start(String reuslts_start) {
+        this.reuslts_start = reuslts_start;
     }
 
-    public int getResults_shown() {
+    public String getResults_shown() {
         return results_shown;
     }
 
-    public void setResults_shown(int results_shown) {
+    public void setResults_shown(String results_shown) {
         this.results_shown = results_shown;
     }
 
-    public List<Object> getRestaurants() {
+    public List<Restaurants> getRestaurants() {
         return restaurants;
     }
 
-    public void setRestaurants(List<Object> restaurants) {
+    public void setRestaurants(List<Restaurants> restaurants) {
         this.restaurants = restaurants;
     }
 
     @Override
     public String toString() {
-        return "ZomatoResponse{" +
-                "results_found=" + results_found +
-                ", results_start=" + results_start +
-                ", results_shown=" + results_shown +
+        return "SearchRestaurantResponse{" +
+                "results_found='" + results_found + '\'' +
+                ", reuslts_start='" + reuslts_start + '\'' +
+                ", results_shown='" + results_shown + '\'' +
                 ", restaurants=" + restaurants +
                 '}';
     }

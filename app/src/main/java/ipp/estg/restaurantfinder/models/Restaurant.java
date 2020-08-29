@@ -1,15 +1,19 @@
 package ipp.estg.restaurantfinder.models;
 
-
 public class Restaurant {
 
+    private String apikey;
     private String id;
-    private String name;
     private String url;
     private Location location;
-    private String currency;
-    private String feature_image;
-    private UserRating user_rating;
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
 
     public String getId() {
         return id;
@@ -17,14 +21,6 @@ public class Restaurant {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUrl() {
@@ -43,40 +39,13 @@ public class Restaurant {
         this.location = location;
     }
 
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getFeature_image() {
-        return feature_image;
-    }
-
-    public void setFeature_image(String feature_image) {
-        this.feature_image = feature_image;
-    }
-
-    public UserRating getUser_rating() {
-        return user_rating;
-    }
-
-    public void setUser_rating(UserRating user_rating) {
-        this.user_rating = user_rating;
-    }
-
     @Override
     public String toString() {
         return "Restaurant{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "apikey='" + apikey + '\'' +
+                ", id='" + id + '\'' +
                 ", url='" + url + '\'' +
                 ", location=" + location +
-                ", currency='" + currency + '\'' +
-                ", feature_image='" + feature_image + '\'' +
-                ", user_rating=" + user_rating +
                 '}';
     }
 }
