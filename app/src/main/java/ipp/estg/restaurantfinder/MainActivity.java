@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<SearchRestaurantResponse> call, Response<SearchRestaurantResponse> response) {
                 if (response.isSuccessful()) {
-                    textView.setText(response.body().getRestaurants().toString());
+                    textView.setText(response.body().toString());
                 }
             }
 
