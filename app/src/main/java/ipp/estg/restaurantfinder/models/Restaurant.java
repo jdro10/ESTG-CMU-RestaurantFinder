@@ -12,6 +12,8 @@ public class Restaurant {
     private String apiKey;
     @SerializedName("id")
     private String id;
+    @SerializedName("name")
+    private String name;
     @SerializedName("url")
     private String url;
     @SerializedName("location")
@@ -157,12 +159,21 @@ public class Restaurant {
         this.phoneNumbers = phoneNumbers;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Restaurant{" +
                 "R=" + R +
                 ", apiKey='" + apiKey + '\'' +
                 ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", location=" + location +
                 ", cuisines='" + cuisines + '\'' +
