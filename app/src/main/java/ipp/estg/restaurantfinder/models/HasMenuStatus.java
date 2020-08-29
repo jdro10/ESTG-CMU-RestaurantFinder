@@ -1,8 +1,12 @@
 package ipp.estg.restaurantfinder.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class HasMenuStatus {
 
+    @SerializedName("delivery")
     private int delivery;
+    @SerializedName("takeaway")
     private int takeaway;
 
     public int getDelivery() {

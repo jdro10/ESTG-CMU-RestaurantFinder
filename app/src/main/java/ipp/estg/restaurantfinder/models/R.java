@@ -1,41 +1,46 @@
 package ipp.estg.restaurantfinder.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class R {
 
-    private HasMenuStatus has_menu_status;
-    private int res_id;
-    private boolean is_grocery_store;
+    @SerializedName("has_menu_status")
+    private HasMenuStatus hasMenuStatus;
+    @SerializedName("res_id")
+    private int resId;
+    @SerializedName("is_grocery_store")
+    private boolean isGroceryStore;
 
-    public HasMenuStatus getHas_menu_status() {
-        return has_menu_status;
+    public HasMenuStatus getHasMenuStatus() {
+        return hasMenuStatus;
     }
 
-    public void setHas_menu_status(HasMenuStatus has_menu_status) {
-        this.has_menu_status = has_menu_status;
+    public void setHasMenuStatus(HasMenuStatus hasMenuStatus) {
+        this.hasMenuStatus = hasMenuStatus;
     }
 
-    public int getRes_id() {
-        return res_id;
+    public int getResId() {
+        return resId;
     }
 
-    public void setRes_id(int res_id) {
-        this.res_id = res_id;
+    public void setResId(int resId) {
+        this.resId = resId;
     }
 
-    public boolean isIs_grocery_store() {
-        return is_grocery_store;
+    public boolean isGroceryStore() {
+        return isGroceryStore;
     }
 
-    public void setIs_grocery_store(boolean is_grocery_store) {
-        this.is_grocery_store = is_grocery_store;
+    public void setGroceryStore(boolean groceryStore) {
+        isGroceryStore = groceryStore;
     }
 
     @Override
     public String toString() {
         return "R{" +
-                "has_menu_status=" + has_menu_status +
-                ", res_id=" + res_id +
-                ", is_grocery_store=" + is_grocery_store +
+                "hasMenuStatus=" + hasMenuStatus +
+                ", resId=" + resId +
+                ", isGroceryStore=" + isGroceryStore +
                 '}';
     }
 }

@@ -1,16 +1,27 @@
 package ipp.estg.restaurantfinder.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Location {
 
+    @SerializedName("address")
     private String address;
+    @SerializedName("locality")
     private String locality;
+    @SerializedName("city")
     private String city;
-    private int city_id;
+    @SerializedName("city_id")
+    private int cityId;
+    @SerializedName("latitude")
     private String latitude;
+    @SerializedName("longitude")
     private String longitude;
+    @SerializedName("zipcode")
     private String zipcode;
-    private int country_id;
-    private String locality_verbose;
+    @SerializedName("country_id")
+    private int countryId;
+    @SerializedName("locality_verbose")
+    private String localityVerbose;
 
     public String getAddress() {
         return address;
@@ -36,12 +47,12 @@ public class Location {
         this.city = city;
     }
 
-    public int getCity_id() {
-        return city_id;
+    public int getCityId() {
+        return cityId;
     }
 
-    public void setCity_id(int city_id) {
-        this.city_id = city_id;
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 
     public String getLatitude() {
@@ -68,20 +79,20 @@ public class Location {
         this.zipcode = zipcode;
     }
 
-    public int getCountry_id() {
-        return country_id;
+    public int getCountryId() {
+        return countryId;
     }
 
-    public void setCountry_id(int country_id) {
-        this.country_id = country_id;
+    public void setCountryId(int countryId) {
+        this.countryId = countryId;
     }
 
-    public String getLocality_verbose() {
-        return locality_verbose;
+    public String getLocalityVerbose() {
+        return localityVerbose;
     }
 
-    public void setLocality_verbose(String locality_verbose) {
-        this.locality_verbose = locality_verbose;
+    public void setLocalityVerbose(String localityVerbose) {
+        this.localityVerbose = localityVerbose;
     }
 
     @Override
@@ -90,12 +101,12 @@ public class Location {
                 "address='" + address + '\'' +
                 ", locality='" + locality + '\'' +
                 ", city='" + city + '\'' +
-                ", city_id=" + city_id +
+                ", cityId=" + cityId +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +
                 ", zipcode='" + zipcode + '\'' +
-                ", country_id=" + country_id +
-                ", locality_verbose='" + locality_verbose + '\'' +
+                ", countryId=" + countryId +
+                ", localityVerbose='" + localityVerbose + '\'' +
                 '}';
     }
 }

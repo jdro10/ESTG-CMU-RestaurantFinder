@@ -1,24 +1,41 @@
 package ipp.estg.restaurantfinder.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Arrays;
 
 public class Restaurant {
 
+    @SerializedName("R")
     private R R;
-    private String apikey;
+    @SerializedName("apikey")
+    private String apiKey;
+    @SerializedName("id")
     private String id;
+    @SerializedName("url")
     private String url;
+    @SerializedName("location")
     private Location location;
+    @SerializedName("cuisines")
     private String cuisines;
+    @SerializedName("timings")
     private String timings;
+    @SerializedName("currency")
     private String currency;
+    @SerializedName("highlights")
     private String[] highlights;
+    @SerializedName("thumb")
     private String thumb;
-    private UserRating user_rating;
-    private String featured_image;
-    private String has_online_delivery;
-    private int is_table_reservation_supported;
-    private String phone_numbers;
+    @SerializedName("user_ratings")
+    private UserRating userRating;
+    @SerializedName("featured_image")
+    private String featuredImage;
+    @SerializedName("has_online_delivery")
+    private String hasOnlineDelivery;
+    @SerializedName("is_table_reservation_supported")
+    private int isTableReservationSupported;
+    @SerializedName("phone_numbers")
+    private String phoneNumbers;
 
     public ipp.estg.restaurantfinder.models.R getR() {
         return R;
@@ -28,12 +45,12 @@ public class Restaurant {
         R = r;
     }
 
-    public String getApikey() {
-        return apikey;
+    public String getApiKey() {
+        return apiKey;
     }
 
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public String getId() {
@@ -100,51 +117,51 @@ public class Restaurant {
         this.thumb = thumb;
     }
 
-    public UserRating getUser_rating() {
-        return user_rating;
+    public UserRating getUserRating() {
+        return userRating;
     }
 
-    public void setUser_rating(UserRating user_rating) {
-        this.user_rating = user_rating;
+    public void setUserRating(UserRating userRating) {
+        this.userRating = userRating;
     }
 
-    public String getFeatured_image() {
-        return featured_image;
+    public String getFeaturedImage() {
+        return featuredImage;
     }
 
-    public void setFeatured_image(String featured_image) {
-        this.featured_image = featured_image;
+    public void setFeaturedImage(String featuredImage) {
+        this.featuredImage = featuredImage;
     }
 
-    public String getHas_online_delivery() {
-        return has_online_delivery;
+    public String getHasOnlineDelivery() {
+        return hasOnlineDelivery;
     }
 
-    public void setHas_online_delivery(String has_online_delivery) {
-        this.has_online_delivery = has_online_delivery;
+    public void setHasOnlineDelivery(String hasOnlineDelivery) {
+        this.hasOnlineDelivery = hasOnlineDelivery;
     }
 
-    public int getIs_table_reservation_supported() {
-        return is_table_reservation_supported;
+    public int getIsTableReservationSupported() {
+        return isTableReservationSupported;
     }
 
-    public void setIs_table_reservation_supported(int is_table_reservation_supported) {
-        this.is_table_reservation_supported = is_table_reservation_supported;
+    public void setIsTableReservationSupported(int isTableReservationSupported) {
+        this.isTableReservationSupported = isTableReservationSupported;
     }
 
-    public String getPhone_numbers() {
-        return phone_numbers;
+    public String getPhoneNumbers() {
+        return phoneNumbers;
     }
 
-    public void setPhone_numbers(String phone_numbers) {
-        this.phone_numbers = phone_numbers;
+    public void setPhoneNumbers(String phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
     }
 
     @Override
     public String toString() {
         return "Restaurant{" +
                 "R=" + R +
-                ", apikey='" + apikey + '\'' +
+                ", apiKey='" + apiKey + '\'' +
                 ", id='" + id + '\'' +
                 ", url='" + url + '\'' +
                 ", location=" + location +
@@ -153,11 +170,11 @@ public class Restaurant {
                 ", currency='" + currency + '\'' +
                 ", highlights=" + Arrays.toString(highlights) +
                 ", thumb='" + thumb + '\'' +
-                ", user_rating=" + user_rating +
-                ", featured_image='" + featured_image + '\'' +
-                ", has_online_delivery='" + has_online_delivery + '\'' +
-                ", is_table_reservation_supported=" + is_table_reservation_supported +
-                ", phone_numbers='" + phone_numbers + '\'' +
+                ", userRating=" + userRating +
+                ", featuredImage='" + featuredImage + '\'' +
+                ", hasOnlineDelivery='" + hasOnlineDelivery + '\'' +
+                ", isTableReservationSupported=" + isTableReservationSupported +
+                ", phoneNumbers='" + phoneNumbers + '\'' +
                 '}';
     }
 }

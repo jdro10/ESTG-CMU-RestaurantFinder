@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
-import ipp.estg.restaurantfinder.models.SearchRestaurantResponse;
+import ipp.estg.restaurantfinder.models.SearchResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,18 +43,18 @@ public class MainActivity extends AppCompatActivity {
 
         ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
 
-        Call<SearchRestaurantResponse> call = zomatoapi.getRestaurants();
+        Call<SearchResponse> call = zomatoapi.getAllRestaurants();
 
-        call.enqueue(new Callback<SearchRestaurantResponse>() {
+        call.enqueue(new Callback<SearchResponse>() {
             @Override
-            public void onResponse(Call<SearchRestaurantResponse> call, Response<SearchRestaurantResponse> response) {
+            public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
                 if (response.isSuccessful()) {
                     textView.setText(response.body().toString());
                 }
             }
 
             @Override
-            public void onFailure(Call<SearchRestaurantResponse> call, Throwable t) {
+            public void onFailure(Call<SearchResponse> call, Throwable t) {
                 textView.setText("erro");
             }
         });
