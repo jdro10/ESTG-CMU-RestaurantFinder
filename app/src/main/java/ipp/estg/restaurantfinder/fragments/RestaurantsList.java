@@ -1,11 +1,15 @@
 package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +83,8 @@ public class RestaurantsList extends Fragment {
                 if (response.isSuccessful()) {
                     searchResponseList.addAll(response.body().getRestaurants());
                     restaurantAdapter.notifyDataSetChanged();
+                    getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                 }
             }
 

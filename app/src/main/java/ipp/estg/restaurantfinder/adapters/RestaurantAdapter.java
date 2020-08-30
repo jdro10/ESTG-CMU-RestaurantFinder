@@ -2,7 +2,11 @@ package ipp.estg.restaurantfinder.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.InputStream;
 import java.util.List;
 
 import ipp.estg.restaurantfinder.R;
@@ -37,7 +42,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View restaurantView = inflater.inflate(R.layout.restaurant_favorite_layout, parent, false);
+        View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
         return new RestaurantViewHolder (restaurantView);
     }
@@ -63,6 +68,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         nameTextView.setText(restaurant.getRestaurant().getName());
         addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
 
+        new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
         /*holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,7 +89,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         public Button call;
         public ImageView photo,favorite;
 
-
         public RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -92,6 +97,35 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             photo = itemView.findViewById(R.id.restaurant_icon);
             call = itemView.findViewById(R.id.call_button);
             favorite = itemView.findViewById(R.id.isFavoriteOrNot);
+        }
+    }
+
+    private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
+
+        private ImageView imageView;
+
+        public GetRestaurantImage(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            Bitmap bitmap = null;
+
+            try {
+                InputStream inputStream = new java.net.URL(strings[0]).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
         }
     }
 }
