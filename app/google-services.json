@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "689360410725",
+    "firebase_url": "https://restaurantfinder-10f6d.firebaseio.com",
+    "project_id": "restaurantfinder-10f6d",
+    "storage_bucket": "restaurantfinder-10f6d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689360410725:android:095a931a271d40a212ce8c",
+        "android_client_info": {
+          "package_name": "ipp.estg.restaurantfinder.activities"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "689360410725-v33ep0s20ooqn8v5ee4q8m9peiludou8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ipp.estg.restaurantfinder.activities",
+            "certificate_hash": "ce706ed13092defd5bdac9732a2305f79854e19a"
+          }
+        },
+        {
+          "client_id": "689360410725-gvggnogiqdamptkla7slqoij7g3k4l5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWTQH9Qcwc-OR8Yl_Lah041AR9fXvOs3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "689360410725-gvggnogiqdamptkla7slqoij7g3k4l5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

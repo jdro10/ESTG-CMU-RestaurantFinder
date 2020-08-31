@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
 import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
