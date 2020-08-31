@@ -16,17 +16,32 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 
 public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRestaurantAdapter.FavoriteRestaurantViewHolder> {
 
     private Context context;
     private List<RestaurantRoom> restaurants;
+    private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private RestaurantDB db;
+
+    private void deleteRestaurants(String id){
+
+        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+        databaseWriterExecutor.execute(() -> {
+            db.daoAccess().deleteRestaurant(id);
+        });
+    }
 
     public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants){
         this.context = context;
@@ -82,6 +97,10 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
             @Override
             public void onClick(View view) {
                 favorite.setImageResource(R.drawable.favorite_border);
+                deleteRestaurants(restaurant.getId());
+
+                restaurants.remove(position);
+                notifyDataSetChanged();
             }
         });
 

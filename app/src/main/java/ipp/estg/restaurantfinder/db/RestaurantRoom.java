@@ -88,8 +88,8 @@ public class RestaurantRoom {
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         public void insertRestaurant(RestaurantRoom restaurantRoom);
 
-        @Query("DELETE FROM RestaurantRoom WHERE phoneNumber = :phoneNumber")
-        public void deleteRestaurant(int phoneNumber);
+        @Query("DELETE FROM RestaurantRoom WHERE id = :id")
+        public void deleteRestaurant(String id);
 
         @Query("SELECT* FROM RestaurantRoom WHERE address LIKE :address ")
         public RestaurantRoom getRestaurantFromAddress(String address);
