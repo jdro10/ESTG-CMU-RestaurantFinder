@@ -90,7 +90,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("phoneNumber",restaurant.getRestaurant().getPhoneNumbers());
+                intent.putExtra("res_id",restaurant.getRestaurant().getId());
                 context.startActivity(intent);
             }
         }); //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
