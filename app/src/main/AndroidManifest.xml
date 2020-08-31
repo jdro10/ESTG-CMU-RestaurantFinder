@@ -14,8 +14,8 @@
         <activity android:name=".activities.RestaurantSelected"></activity>
         <activity android:name=".activities.FavoritesRestaurants" />
         <activity android:name=".activities.NearbyRestaurants" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".AuthenticationActivity" />
+        <activity android:name=".activities.SignUpActivity" />
+        <activity android:name=".activities.AuthenticationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
