@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.models.Restaurants;
@@ -85,12 +86,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
 
-        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(context, RestaurantSelected.class);
+                intent.putExtra("phoneNumber",restaurant.getRestaurant().getPhoneNumbers());
+                context.startActivity(intent);
             }
-        });*/ //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
+        }); //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
 
         final ImageView favorite = holder.favorite;
 

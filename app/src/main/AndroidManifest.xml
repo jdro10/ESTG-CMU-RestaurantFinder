@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.FavoritesRestaurants"></activity>
+        <activity android:name=".activities.RestaurantSelected"></activity>
+        <activity android:name=".activities.FavoritesRestaurants" />
         <activity android:name=".activities.NearbyRestaurants" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".AuthenticationActivity" />
