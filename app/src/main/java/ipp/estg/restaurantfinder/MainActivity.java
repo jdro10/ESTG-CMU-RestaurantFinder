@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.loginActivityButton);
         Button button1 = findViewById(R.id.restaurantButton);
-        textView = findViewById(R.id.api);
+        Button button2 = findViewById(R.id.favoritesActivity);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,6 +36,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NearbyRestaurants.class);
+                startActivity(intent);
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
                 startActivity(intent);
             }
         });

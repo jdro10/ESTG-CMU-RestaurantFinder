@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/loginActivityButton"
@@ -17,15 +18,11 @@
         android:layout_height="wrap_content"
         android:text="Abrir restaurant activity" />
 
-    <ScrollView
+    <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:text="Abrir favoritos"
+        android:id="@+id/favoritesActivity"/>
 
-        <TextView
-            android:id="@+id/api"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </ScrollView>
 
 </LinearLayout>
