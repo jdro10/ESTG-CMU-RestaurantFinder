@@ -55,11 +55,6 @@ public class FavoritesRestaurantList extends Fragment {
 
         this.getRestaurants();
 
-        /*if(this.favoriteRestaurants.size() == 0 ){
-            Intent i = new Intent(this.context, MainActivity.class);
-            startActivity(i);
-        }*/
-
         this.favoriteRestaurantAdapter = new FavoriteRestaurantAdapter(this.context, this.favoriteRestaurants);
 
         this.recyclerView.setAdapter(this.favoriteRestaurantAdapter);
