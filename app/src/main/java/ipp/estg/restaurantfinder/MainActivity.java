@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
+import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Button button = findViewById(R.id.loginActivityButton);
         Button button1 = findViewById(R.id.restaurantButton);
         Button button2 = findViewById(R.id.favoritesActivity);
+        Button button3 = findViewById(R.id.restaurant_details);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,5 +49,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), RestaurantSelected.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
