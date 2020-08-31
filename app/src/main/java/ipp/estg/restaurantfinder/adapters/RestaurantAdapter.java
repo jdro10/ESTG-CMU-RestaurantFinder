@@ -69,12 +69,24 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
 
         new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
+
         /*holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });*/ //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
+
+        final ImageView favorite = holder.favorite;
+
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favorite.setImageResource(R.drawable.favorite_border);
+            }
+        });
+
+
 
     }
 
