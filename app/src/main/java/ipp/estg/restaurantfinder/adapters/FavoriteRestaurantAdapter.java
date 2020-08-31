@@ -27,31 +27,30 @@ import java.util.concurrent.Executors;
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
-import ipp.estg.restaurantfinder.models.Restaurants;
 
-public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> {
+public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRestaurantAdapter.FavoriteRestaurantViewHolder> {
 
     private Context context;
-    private List<Restaurants> restaurants;
+    private List<RestaurantRoom> restaurants;
     private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private RestaurantDB db;
 
-    private void makeFavorite(RestaurantRoom restaurantRoom){
+    private void deleteRestaurants(String id){
 
         db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
         databaseWriterExecutor.execute(() -> {
-            db.daoAccess().insertRestaurant(restaurantRoom);
+            db.daoAccess().deleteRestaurant(id);
         });
     }
 
-    public RestaurantAdapter(Context context, List<Restaurants> restaurants){
+    public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants){
         this.context = context;
         this.restaurants = restaurants;
     }
 
     @NonNull
     @Override
-    public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FavoriteRestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("teste", "teste");
 
         Context context = parent.getContext();
@@ -59,20 +58,20 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
-        return new RestaurantViewHolder (restaurantView);
+        return new FavoriteRestaurantViewHolder (restaurantView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FavoriteRestaurantViewHolder holder, int position) {
 
-        final Restaurants restaurant = this.restaurants.get(position);
+        final RestaurantRoom restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
 
         call_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurant.getRestaurant().getPhoneNumbers(), null));
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurant.getPhoneNumber(), null));
                 context.startActivity(phoneIntent);
             }
         });
@@ -80,10 +79,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         TextView nameTextView = holder.name;
         TextView addressTextView = holder.address;
 
-        nameTextView.setText(restaurant.getRestaurant().getName());
-        addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
+        nameTextView.setText(restaurant.getName());
+        addressTextView.setText(restaurant.getAddress());
 
-        new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
+        new GetRestaurantImage(holder.photo).execute(restaurant.getThumb());
 
         /*holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,19 +96,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                RestaurantRoom tmp = new RestaurantRoom(restaurant.getRestaurant().getId(),
-                        restaurant.getRestaurant().getName(),
-                        restaurant.getRestaurant().getThumb(),
-                        restaurant.getRestaurant().getPhoneNumbers(),
-                        restaurant.getRestaurant().getUrl(),
-                        restaurant.getRestaurant().getLocation().getAddress());
-
-                makeFavorite(tmp);
                 favorite.setImageResource(R.drawable.favorite_border);
+                deleteRestaurants(restaurant.getId());
 
-
-
+                restaurants.remove(position);
+                notifyDataSetChanged();
             }
         });
 
@@ -122,13 +113,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         return this.restaurants.size();
     }
 
-    public class RestaurantViewHolder extends RecyclerView.ViewHolder{
+    public class FavoriteRestaurantViewHolder extends RecyclerView.ViewHolder{
 
         public TextView address , name;
         public Button call;
         public ImageView photo,favorite;
 
-        public RestaurantViewHolder(@NonNull View itemView) {
+        public FavoriteRestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
 
             address = itemView.findViewById(R.id.restaurant_address);
