@@ -2,6 +2,7 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
@@ -48,10 +51,7 @@ public class RestaurantDetails extends Fragment {
 
         ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
 
-        Call<Restaurant> call = zomatoapi.getRestaurant("19428023"); //estatico
-
-        //getActivity().getIntent().getStringExtra("phoneNumber")
-
+        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(getActivity().getIntent().getExtras().getString("res_id"))); //estatico
 
         call.enqueue(new Callback<Restaurant>() {
             @Override

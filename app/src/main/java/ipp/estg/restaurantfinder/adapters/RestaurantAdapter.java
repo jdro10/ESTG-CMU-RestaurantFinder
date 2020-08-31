@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,15 +30,15 @@ import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
+import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> {
 
     private Context context;
     private List<Restaurants> restaurants;
-    private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
     private RestaurantDB db;
-
     private void makeFavorite(RestaurantRoom restaurantRoom){
 
         db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
@@ -86,16 +88,19 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        ImageView photo = holder.photo;
+
+        photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("phoneNumber",restaurant.getRestaurant().getPhoneNumbers());
+                intent.putExtra("res_id",restaurant.getRestaurant().getId());
                 context.startActivity(intent);
             }
-        }); //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
+        });
 
-        final ImageView favorite = holder.favorite;
+        ImageView favorite = holder.favorite;
+
 
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +115,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
                 makeFavorite(tmp);
                 favorite.setImageResource(R.drawable.favorite);
-
 
             }
         });
