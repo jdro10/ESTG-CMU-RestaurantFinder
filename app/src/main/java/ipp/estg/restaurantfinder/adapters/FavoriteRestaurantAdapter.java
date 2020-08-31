@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 
@@ -84,14 +85,18 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
         new GetRestaurantImage(holder.photo).execute(restaurant.getThumb());
 
-        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+        ImageView photo = holder.photo;
+
+        photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(context, RestaurantSelected.class);
+                intent.putExtra("res_id",restaurant.getId());
+                context.startActivity(intent);
             }
-        });*/ //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
+        });
 
-        final ImageView favorite = holder.favorite;
+        ImageView favorite = holder.favorite;
 
         favorite.setImageResource(R.drawable.delete);
 

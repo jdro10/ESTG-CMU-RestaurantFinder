@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -86,35 +87,39 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+
+        ImageView photo = holder.photo;
+
+        photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RestaurantSelected.class);
                 intent.putExtra("res_id",restaurant.getRestaurant().getId());
                 context.startActivity(intent);
             }
-        }); //EM CASO DE QUEREMOS USAR O TOQUE NA LINHA
-
-        final ImageView favorite = holder.favorite;
-
-        favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                RestaurantRoom tmp = new RestaurantRoom(restaurant.getRestaurant().getId(),
-                        restaurant.getRestaurant().getName(),
-                        restaurant.getRestaurant().getThumb(),
-                        restaurant.getRestaurant().getPhoneNumbers(),
-                        restaurant.getRestaurant().getUrl(),
-                        restaurant.getRestaurant().getLocation().getAddress());
-
-                makeFavorite(tmp);
-                favorite.setImageResource(R.drawable.favorite);
-
-
-            }
         });
 
+        ImageView favorite = holder.favorite;
+
+        if(favorite.getImageAlpha() == R.drawable.favorite_border){
+            favorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    RestaurantRoom tmp = new RestaurantRoom(restaurant.getRestaurant().getId(),
+                            restaurant.getRestaurant().getName(),
+                            restaurant.getRestaurant().getThumb(),
+                            restaurant.getRestaurant().getPhoneNumbers(),
+                            restaurant.getRestaurant().getUrl(),
+                            restaurant.getRestaurant().getLocation().getAddress());
+
+                    makeFavorite(tmp);
+                    favorite.setImageResource(R.drawable.favorite);
+
+                }
+            });
+        }
 
 
     }
