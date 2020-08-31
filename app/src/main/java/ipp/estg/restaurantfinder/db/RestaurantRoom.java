@@ -83,7 +83,7 @@ public class RestaurantRoom {
         public RestaurantRoom[] getAll();
 
         @Query("SELECT* FROM RestaurantRoom WHERE phoneNumber = (:phoneNumber)")
-        public RestaurantRoom getRestaurantFromPhoneNumber(int phoneNumber);
+        public RestaurantRoom getRestaurantFromPhoneNumber(String phoneNumber);
 
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         public void insertRestaurant(RestaurantRoom restaurantRoom);

@@ -93,10 +93,11 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
         final ImageView favorite = holder.favorite;
 
+        favorite.setImageResource(R.drawable.delete);
+
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                favorite.setImageResource(R.drawable.favorite_border);
                 deleteRestaurants(restaurant.getId());
 
                 restaurants.remove(position);
