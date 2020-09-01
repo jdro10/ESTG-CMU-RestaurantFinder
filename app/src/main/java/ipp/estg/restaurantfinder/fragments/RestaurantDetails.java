@@ -1,25 +1,32 @@
 package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.MapActivity;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
+import ipp.estg.restaurantfinder.models.Location;
 import ipp.estg.restaurantfinder.models.Restaurant;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +39,8 @@ public class RestaurantDetails extends Fragment {
     private Context context;
     private TextView restaurant_selected;
     private ImageView restaurantImage;
+    private Button mapButton;
+    private Location location;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +56,7 @@ public class RestaurantDetails extends Fragment {
 
         restaurant_selected = contentView.findViewById(R.id.restaurant_selected);
         restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
+        mapButton = contentView.findViewById(R.id.open_restaurant_map);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://developers.zomato.com/api/v2.1/")
@@ -68,6 +78,8 @@ public class RestaurantDetails extends Fragment {
                         new GetRestaurantImage(restaurantImage).execute(response.body().getThumb());
                     }
 
+                    location = response.body().getLocation();
+
                     getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
                 }
             }
@@ -75,6 +87,17 @@ public class RestaurantDetails extends Fragment {
             @Override
             public void onFailure(Call<Restaurant> call, Throwable t) {
 
+            }
+        });
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+                mapIntent.putExtra("latitude", location.getLatitude());
+                mapIntent.putExtra("longitude", location.getLongitude());
+
+                startActivity(mapIntent);
             }
         });
 
