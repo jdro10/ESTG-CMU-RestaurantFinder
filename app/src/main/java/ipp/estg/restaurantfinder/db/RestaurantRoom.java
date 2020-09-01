@@ -78,7 +78,7 @@ public class RestaurantRoom {
     }
 
     @Dao
-    public interface RestaurantRoomDao{
+    public interface RestaurantRoomDao {
         @Query("SELECT * FROM RestaurantRoom")
         public RestaurantRoom[] getAll();
 
@@ -96,6 +96,4 @@ public class RestaurantRoom {
         //TEMOS Q PASSAR A STRING COM %ADDRESS%
 
     }
-
-
 }

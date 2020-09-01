@@ -89,7 +89,6 @@ public class RestaurantsList extends Fragment {
                     searchResponseList.addAll(response.body().getRestaurants());
                     restaurantAdapter.notifyDataSetChanged();
                     getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
                 }
             }
 

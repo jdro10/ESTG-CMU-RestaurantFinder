@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,18 +31,18 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
     private Context context;
     private List<RestaurantRoom> restaurants;
-    private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private RestaurantDB db;
 
-    private void deleteRestaurants(String id){
+    private void deleteRestaurants(String id) {
 
-        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+        db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().deleteRestaurant(id);
         });
     }
 
-    public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants){
+    public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants) {
         this.context = context;
         this.restaurants = restaurants;
     }
@@ -52,53 +50,44 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
     @NonNull
     @Override
     public FavoriteRestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d("teste", "teste");
-
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
-        return new FavoriteRestaurantViewHolder (restaurantView);
+        return new FavoriteRestaurantViewHolder(restaurantView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteRestaurantViewHolder holder, int position) {
 
-        final RestaurantRoom restaurant = this.restaurants.get(position);
+        RestaurantRoom restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
-
-        call_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurant.getPhoneNumber(), null));
-                context.startActivity(phoneIntent);
-            }
-        });
-
         TextView nameTextView = holder.name;
         TextView addressTextView = holder.address;
+        ImageView photo = holder.photo;
+        ImageView favorite = holder.favorite;
+
 
         nameTextView.setText(restaurant.getName());
         addressTextView.setText(restaurant.getAddress());
+        favorite.setImageResource(R.drawable.delete);
 
-        new GetRestaurantImage(holder.photo).execute(restaurant.getThumb());
-
-        ImageView photo = holder.photo;
+        if (restaurant.getThumb().equals("")) {
+            photo.setImageResource(R.drawable.no_image);
+        } else {
+            new GetRestaurantImage(holder.photo).execute(restaurant.getThumb());
+        }
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("res_id",restaurant.getId());
+                intent.putExtra("res_id", restaurant.getId());
                 context.startActivity(intent);
             }
         });
-
-        ImageView favorite = holder.favorite;
-
-        favorite.setImageResource(R.drawable.delete);
 
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +99,13 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
             }
         });
 
-
+        call_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurant.getPhoneNumber(), null));
+                context.startActivity(phoneIntent);
+            }
+        });
 
     }
 
@@ -119,11 +114,11 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         return this.restaurants.size();
     }
 
-    public class FavoriteRestaurantViewHolder extends RecyclerView.ViewHolder{
+    public class FavoriteRestaurantViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView address , name;
+        public TextView address, name;
         public Button call;
-        public ImageView photo,favorite;
+        public ImageView photo, favorite;
 
         public FavoriteRestaurantViewHolder(@NonNull View itemView) {
             super(itemView);

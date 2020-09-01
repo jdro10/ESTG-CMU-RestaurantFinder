@@ -29,6 +29,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException ignored) {
+        }
+
         setContentView(R.layout.sign_up_layout);
 
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -49,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             signupDialog("Successfully registered!", getString(R.string.success_signup), getString(R.string.success_signup_button));
                         } else {
                             signupDialog("Error!", getString(R.string.error_signup), getString(R.string.ok_button));
@@ -79,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(dialogButton.getText().equals(getString(R.string.success_signup_button))) {
+                if (dialogButton.getText().equals(getString(R.string.success_signup_button))) {
                     Intent loginIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(loginIntent);
                 } else if (dialogButton.getText().equals(getString(R.string.ok_button))) {

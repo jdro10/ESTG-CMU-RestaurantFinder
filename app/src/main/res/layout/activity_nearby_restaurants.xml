@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/loadingPanel"
@@ -21,6 +21,12 @@
             android:layout_centerVertical="true" />
 
     </RelativeLayout>
+
+    <fragment
+        android:name="ipp.estg.restaurantfinder.fragments.SearchFragment"
+        android:id="@+id/searchBarFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <fragment
         android:name="ipp.estg.restaurantfinder.fragments.RestaurantsList"

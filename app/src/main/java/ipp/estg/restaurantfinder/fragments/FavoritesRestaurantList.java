@@ -1,7 +1,6 @@
 package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +20,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.adapters.FavoriteRestaurantAdapter;
-import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 
@@ -34,8 +31,8 @@ public class FavoritesRestaurantList extends Fragment {
     private FavoriteRestaurantAdapter favoriteRestaurantAdapter;
     private RecyclerView recyclerView;
     private List<RestaurantRoom> favoriteRestaurants;
-    private  final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
-    private  RestaurantDB db;
+    private final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
+    private RestaurantDB db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,14 +61,11 @@ public class FavoritesRestaurantList extends Fragment {
         return contentView;
     }
 
-    private void getRestaurants(){
+    private void getRestaurants() {
 
-        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+        db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseReadExecutor.execute(() -> {
             favoriteRestaurants.addAll(Arrays.asList(db.daoAccess().getAll()));
         });
     }
-
-
-
 }
