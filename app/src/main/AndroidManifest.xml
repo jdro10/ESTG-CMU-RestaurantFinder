@@ -3,6 +3,8 @@
     package="ipp.estg.restaurantfinder">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.RestaurantSelected"></activity>
+        <activity android:name=".activities.MapActivity"></activity>
+        <activity android:name=".activities.RestaurantSelected" />
         <activity android:name=".activities.FavoritesRestaurants" />
         <activity android:name=".activities.NearbyRestaurants" />
         <activity android:name=".activities.SignUpActivity" />
@@ -23,6 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyALGHZy2o6ZBXrvzVD714CqQ-5U9mH0S_Y" />
     </application>
 
 </manifest>
