@@ -1,17 +1,21 @@
 package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.InputStream;
 import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
@@ -27,7 +31,7 @@ public class RestaurantDetails extends Fragment {
 
     private Context context;
     private TextView restaurant_selected;
-
+    private ImageView restaurantImage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class RestaurantDetails extends Fragment {
         View contentView = inflater.inflate(R.layout.restaurant_layout, container, false);
 
         restaurant_selected = contentView.findViewById(R.id.restaurant_selected);
+        restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://developers.zomato.com/api/v2.1/")
@@ -57,6 +62,13 @@ public class RestaurantDetails extends Fragment {
             public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
                 if (response.isSuccessful()) {
                     restaurant_selected.setText(response.body().getName());
+                    if (response.body().getThumb().equals("")) {
+                        restaurantImage.setImageResource(R.drawable.no_image);
+                    } else {
+                        new GetRestaurantImage(restaurantImage).execute(response.body().getThumb());
+                    }
+
+                    getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
                 }
             }
 
@@ -66,9 +78,35 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
-
         return contentView;
     }
 
+    private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
 
+        private ImageView imageView;
+
+        public GetRestaurantImage(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            Bitmap bitmap = null;
+
+            try {
+                InputStream inputStream = new java.net.URL(strings[0]).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
+    }
 }

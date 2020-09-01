@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,36 +18,33 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
-import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> {
 
     private Context context;
     private List<Restaurants> restaurants;
-    private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
     private RestaurantDB db;
     private List<RestaurantRoom> favorites;
 
-    private void makeFavorite(RestaurantRoom restaurantRoom){
+    private void makeFavorite(RestaurantRoom restaurantRoom) {
 
-        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+        db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().insertRestaurant(restaurantRoom);
         });
     }
 
-    public RestaurantAdapter(Context context, List<Restaurants> restaurants, List<RestaurantRoom> favorites){
+    public RestaurantAdapter(Context context, List<Restaurants> restaurants, List<RestaurantRoom> favorites) {
         this.context = context;
         this.restaurants = restaurants;
         this.favorites = favorites;
@@ -64,15 +59,29 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
-        return new RestaurantViewHolder (restaurantView);
+        return new RestaurantViewHolder(restaurantView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
 
-        final Restaurants restaurant = this.restaurants.get(position);
+        Restaurants restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
+        TextView nameTextView = holder.name;
+        TextView addressTextView = holder.address;
+        ImageView favorite = holder.favorite;
+        ImageView photo = holder.photo;
+
+        nameTextView.setText(restaurant.getRestaurant().getName());
+        addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
+
+        if (restaurant.getRestaurant().getThumb().equals("")) {
+            new GetRestaurantImage(holder.favorite).execute(restaurant.getRestaurant().getId());
+            holder.photo.setImageResource(R.drawable.no_image);
+        } else {
+            new GetRestaurantImage(holder.photo, holder.favorite).execute(restaurant.getRestaurant().getThumb(), restaurant.getRestaurant().getId());
+        }
 
         call_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,28 +91,15 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             }
         });
 
-        TextView nameTextView = holder.name;
-        TextView addressTextView = holder.address;
-
-        nameTextView.setText(restaurant.getRestaurant().getName());
-        addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
-
-        ImageView favorite = holder.favorite;
-
-        new GetRestaurantImage(holder.photo,holder.favorite).execute(restaurant.getRestaurant().getThumb(),restaurant.getRestaurant().getId());
-
-        ImageView photo = holder.photo;
-
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("res_id",restaurant.getRestaurant().getId());
+                intent.putExtra("res_id", restaurant.getRestaurant().getId());
+                intent.putExtra("thumb", restaurant.getRestaurant().getThumb());
                 context.startActivity(intent);
             }
         });
-
-
 
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,9 +117,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
             }
         });
-
-
-
     }
 
     @Override
@@ -131,11 +124,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         return this.restaurants.size();
     }
 
-    public class RestaurantViewHolder extends RecyclerView.ViewHolder{
+    public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView address , name;
+        public TextView address, name;
         public Button call;
-        public ImageView photo,favorite;
+        public ImageView photo, favorite;
 
         public RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -153,8 +146,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         private ImageView imageView;
         private ImageView favorite;
 
-        public GetRestaurantImage(ImageView imageView,ImageView favorite) {
+        public GetRestaurantImage(ImageView imageView, ImageView favorite) {
             this.imageView = imageView;
+            this.favorite = favorite;
+        }
+
+        public GetRestaurantImage(ImageView favorite) {
             this.favorite = favorite;
         }
 
@@ -163,18 +160,26 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             Bitmap bitmap = null;
 
 
-            if(check(strings[1])){
-                favorite.setImageResource(R.drawable.favorite);
-            }else{
-                favorite.setImageResource(R.drawable.favorite_border);
-            }
+            if (imageView != null) {
+                if (check(strings[1])) {
+                    favorite.setImageResource(R.drawable.favorite);
+                } else {
+                    favorite.setImageResource(R.drawable.favorite_border);
+                }
 
-            try {
-                InputStream inputStream = new java.net.URL(strings[0]).openStream();
-                bitmap = BitmapFactory.decodeStream(inputStream);
+                try {
+                    InputStream inputStream = new java.net.URL(strings[0]).openStream();
+                    bitmap = BitmapFactory.decodeStream(inputStream);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (check(strings[0])) {
+                    favorite.setImageResource(R.drawable.favorite);
+                } else {
+                    favorite.setImageResource(R.drawable.favorite_border);
+                }
             }
 
             return bitmap;
@@ -182,14 +187,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
+            if (imageView != null) {
+                imageView.setImageBitmap(result);
+            }
         }
     }
 
-    private boolean check(String id){
+    private boolean check(String id) {
 
-        for(RestaurantRoom restaurant : this.favorites){
-            if(restaurant.getId().equals(id)){
+        for (RestaurantRoom restaurant : this.favorites) {
+            if (restaurant.getId().equals(id)) {
                 return true;
             }
         }

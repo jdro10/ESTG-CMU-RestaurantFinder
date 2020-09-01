@@ -4,14 +4,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:id="@+id/loadingPanelRestaurantDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:id="@+id/loading_progress_xml"
+            style="?android:attr/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/restaurant_selected"
         android:text="@string/restaurant_selected"
-        android:gravity="center_horizontal"
-        />
+        android:gravity="center_horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,15 +67,11 @@
 
     </LinearLayout>
 
-
     <ImageView
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:id="@+id/restaurant_selected_image"
-        android:layout_gravity="center"
-        android:src="@drawable/restaurant_icon"/>
-
-
+        android:layout_gravity="center" />
 
     <LinearLayout
         android:orientation="horizontal"
