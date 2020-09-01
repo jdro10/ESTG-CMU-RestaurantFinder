@@ -39,6 +39,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private List<Restaurants> restaurants;
     private  final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
     private RestaurantDB db;
+    private List<RestaurantRoom> favorites;
+
     private void makeFavorite(RestaurantRoom restaurantRoom){
 
         db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
@@ -47,15 +49,15 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         });
     }
 
-    public RestaurantAdapter(Context context, List<Restaurants> restaurants){
+    public RestaurantAdapter(Context context, List<Restaurants> restaurants, List<RestaurantRoom> favorites){
         this.context = context;
         this.restaurants = restaurants;
+        this.favorites = favorites;
     }
 
     @NonNull
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d("teste", "teste");
 
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -86,7 +88,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         nameTextView.setText(restaurant.getRestaurant().getName());
         addressTextView.setText(restaurant.getRestaurant().getLocation().getAddress());
 
-        new GetRestaurantImage(holder.photo).execute(restaurant.getRestaurant().getThumb());
+        ImageView favorite = holder.favorite;
+
+        new GetRestaurantImage(holder.photo,holder.favorite).execute(restaurant.getRestaurant().getThumb(),restaurant.getRestaurant().getId());
 
         ImageView photo = holder.photo;
 
@@ -99,7 +103,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             }
         });
 
-        ImageView favorite = holder.favorite;
 
 
         favorite.setOnClickListener(new View.OnClickListener() {
@@ -148,14 +151,23 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
 
         private ImageView imageView;
+        private ImageView favorite;
 
-        public GetRestaurantImage(ImageView imageView) {
+        public GetRestaurantImage(ImageView imageView,ImageView favorite) {
             this.imageView = imageView;
+            this.favorite = favorite;
         }
 
         @Override
         protected Bitmap doInBackground(String... strings) {
             Bitmap bitmap = null;
+
+
+            if(check(strings[1])){
+                favorite.setImageResource(R.drawable.favorite);
+            }else{
+                favorite.setImageResource(R.drawable.favorite_border);
+            }
 
             try {
                 InputStream inputStream = new java.net.URL(strings[0]).openStream();
@@ -172,5 +184,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
+    }
+
+    private boolean check(String id){
+
+        for(RestaurantRoom restaurant : this.favorites){
+            if(restaurant.getId().equals(id)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

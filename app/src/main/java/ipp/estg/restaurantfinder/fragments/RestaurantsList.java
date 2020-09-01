@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +23,7 @@ import java.util.concurrent.Executors;
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
+import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Restaurants;
 import ipp.estg.restaurantfinder.models.SearchResponse;
@@ -38,12 +40,16 @@ public class RestaurantsList extends Fragment {
     private RestaurantAdapter restaurantAdapter;
     private RecyclerView recyclerView;
     private List<Restaurants> searchResponseList;
+    private List<RestaurantRoom> favoriteRestaurantsList;
+    private  final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
+    private  RestaurantDB db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.context = getActivity();
+        favoriteRestaurantsList = new ArrayList<>();
     }
 
     @Nullable
@@ -54,9 +60,10 @@ public class RestaurantsList extends Fragment {
         this.recyclerView = contentView.findViewById(R.id.restaurantsRecyclerView);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        this.getRestaurants();
         this.getRestaurantsFromAPI();
 
-        this.restaurantAdapter = new RestaurantAdapter(this.context, this.searchResponseList);
+        this.restaurantAdapter = new RestaurantAdapter(this.context, this.searchResponseList,this.favoriteRestaurantsList);
 
         this.recyclerView.setAdapter(this.restaurantAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
@@ -90,6 +97,14 @@ public class RestaurantsList extends Fragment {
             public void onFailure(Call<SearchResponse> call, Throwable t) {
 
             }
+        });
+    }
+
+    private void getRestaurants(){
+
+        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+        databaseReadExecutor.execute(() -> {
+            favoriteRestaurantsList.addAll(Arrays.asList(db.daoAccess().getAll()));
         });
     }
 }

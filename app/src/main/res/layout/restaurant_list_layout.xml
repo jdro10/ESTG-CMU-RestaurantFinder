@@ -56,10 +56,9 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/isFavoriteOrNot"
-            android:src="@drawable/favorite_border"
             android:layout_marginLeft="27dp"
-            android:layout_marginTop="5dp" />
-
+            android:layout_marginTop="5dp"
+            android:src="@drawable/favorite_border"/>
     </LinearLayout>
 
 </LinearLayout>

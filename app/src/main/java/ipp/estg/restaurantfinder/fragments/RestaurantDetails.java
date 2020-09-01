@@ -26,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestaurantDetails extends Fragment {
 
     private Context context;
-    private Restaurant restaurant;
     private TextView restaurant_selected;
 
 
@@ -51,7 +50,7 @@ public class RestaurantDetails extends Fragment {
 
         ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
 
-        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(getActivity().getIntent().getExtras().getString("res_id"))); //estatico
+        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(getActivity().getIntent().getExtras().getString("res_id")));
 
         call.enqueue(new Callback<Restaurant>() {
             @Override
