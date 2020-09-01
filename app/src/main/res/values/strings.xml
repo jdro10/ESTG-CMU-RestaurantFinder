@@ -14,4 +14,9 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="new_password">New password</string>
     <string name="sign_up_phrase">Sign up to Restaurant Finder!</string>
+    <string name="success_signup">You can now login into Restaurant Finder!</string>
+    <string name="error_signup">Something went wrong! Please try again later!</string>
+    <string name="success_signup_button">Login!</string>
+    <string name="ok_button">OK!</string>
+    <string name="login_error">Email or password incorrect. Try again!</string>
 </resources>
