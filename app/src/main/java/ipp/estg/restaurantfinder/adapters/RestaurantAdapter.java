@@ -165,6 +165,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
             if(check(strings[1])){
                 favorite.setImageResource(R.drawable.favorite);
+            }else{
+                favorite.setImageResource(R.drawable.favorite_border);
             }
 
             try {
