@@ -78,6 +78,11 @@ public class RestaurantsList extends Fragment {
 
         this.getRestaurants();
 
+        this.restaurantAdapter = new RestaurantAdapter(this.context, new ArrayList<>(), this.favoriteRestaurantsList);
+        recyclerView.setAdapter(this.restaurantAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
+
         return contentView;
     }
 
@@ -133,11 +138,7 @@ public class RestaurantsList extends Fragment {
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
                 if (response.isSuccessful()) {
                     searchResponseList.addAll(response.body().getRestaurants());
-
-                    restaurantAdapter = new RestaurantAdapter(context, searchResponseList, favoriteRestaurantsList);
-                    recyclerView.setAdapter(restaurantAdapter);
-                    recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    restaurantAdapter.setRestaurants(searchResponseList);
 
                     getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 }
@@ -145,7 +146,7 @@ public class RestaurantsList extends Fragment {
 
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
-                Toast.makeText(context, "Error fetching data from Zomato, please try agian later!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Error fetching data from Zomato, please try again later!", Toast.LENGTH_LONG).show();
             }
         });
     }
