@@ -30,5 +30,11 @@
         android:text="Abrir detalhes restaurante"
         android:id="@+id/restaurant_details"/>
 
+    <Button
+        android:id="@+id/startService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start service" />
+
 
 </LinearLayout>

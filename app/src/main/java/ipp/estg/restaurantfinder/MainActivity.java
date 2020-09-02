@@ -12,6 +12,7 @@ import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
 import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
+import ipp.estg.restaurantfinder.services.LocationService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
         Button button1 = findViewById(R.id.restaurantButton);
         Button button2 = findViewById(R.id.favoritesActivity);
         Button button3 = findViewById(R.id.restaurant_details);
+        Button button4 = findViewById(R.id.startService);
+
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,5 +63,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startService(view);
+            }
+        });
+
+    }
+
+    public void startService(View v) {
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        startService(serviceIntent);
     }
 }
