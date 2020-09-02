@@ -1,5 +1,6 @@
 package ipp.estg.restaurantfinder.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -14,8 +15,14 @@ import android.widget.Toast;
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.db.Review;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button send;
     private TextView comentario,nomePessoa;
     DatabaseReference ref;
+
 
 
     @Override
@@ -86,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 addReview();
             }
         });
+
+
 
     }
 
