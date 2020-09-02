@@ -118,7 +118,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
                 makeFavorite(tmp);
                 favorite.setImageResource(R.drawable.favorite);
-
             }
         });
     }
@@ -126,6 +125,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     @Override
     public int getItemCount() {
         return this.restaurants.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {

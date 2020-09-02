@@ -79,9 +79,9 @@ public class RestaurantsList extends Fragment {
         this.getRestaurants();
 
         this.restaurantAdapter = new RestaurantAdapter(this.context, new ArrayList<>(), this.favoriteRestaurantsList);
-        recyclerView.setAdapter(this.restaurantAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
+        this.recyclerView.setAdapter(this.restaurantAdapter);
+        this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         return contentView;
     }
