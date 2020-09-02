@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,10 +28,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/person_rate"
-            android:id="@+id/person_rate"
+            android:text="@string/food_rate"
+            android:id="@+id/food_rate"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clean_rate"
+            android:id="@+id/clean_rate"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
 
     </LinearLayout>
 
@@ -40,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/comments"
-        android:id="@+id/restaurant_comments"
+        android:id="@+id/restaurant_comment"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"/>

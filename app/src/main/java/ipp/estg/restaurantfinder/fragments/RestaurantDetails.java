@@ -6,25 +6,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
+import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Location;
 import ipp.estg.restaurantfinder.models.Restaurant;
@@ -39,14 +45,18 @@ public class RestaurantDetails extends Fragment {
     private Context context;
     private TextView restaurant_selected;
     private ImageView restaurantImage;
-    private Button mapButton;
+    private Button mapButton,rateButton;
     private Location location;
+    DatabaseReference ref;
+    private String restaurantName;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.context = getActivity();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        ref = database.getReference("reviews");
     }
 
     @Nullable
@@ -57,6 +67,7 @@ public class RestaurantDetails extends Fragment {
         restaurant_selected = contentView.findViewById(R.id.restaurant_selected);
         restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
         mapButton = contentView.findViewById(R.id.open_restaurant_map);
+        rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://developers.zomato.com/api/v2.1/")
@@ -72,6 +83,7 @@ public class RestaurantDetails extends Fragment {
             public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
                 if (response.isSuccessful()) {
                     restaurant_selected.setText(response.body().getName());
+                    restaurantName = response.body().getName();
                     if (response.body().getThumb().equals("")) {
                         restaurantImage.setImageResource(R.drawable.no_image);
                     } else {
@@ -101,7 +113,57 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
+        rateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rateDialog();
+            }
+        });
+
         return contentView;
+    }
+
+    private void rateDialog(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_NoActionBar);
+        alert.setTitle("Rate");
+
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.rate_dialog,null);
+
+        EditText name = view.findViewById(R.id.person_name);
+        EditText comment = view.findViewById(R.id.comment);
+        RadioGroup foodRate = view.findViewById(R.id.food_rate);
+        RadioGroup cleanRate = view.findViewById(R.id.clean_rate);
+        Button submit = view.findViewById(R.id.submit_button);
+
+        alert.setView(view);
+
+        AlertDialog dialog = alert.create();
+        dialog.show();
+
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(comment.getText().toString())){
+
+                    String id = ref.push().getKey();
+                    /*Review review = new Review(name.getText().toString(),"algum restaurante",comment.getText().toString(),foodRate.getCheckedRadioButtonId(),cleanRate.getCheckedRadioButtonId());*/
+                    Review review = new Review(name.getText().toString(),restaurantName,comment.getText().toString(),5,5);
+                    //Log.d("teste",foodRate.getCheckedRadioButtonId()+"");
+                    ref.child(id).setValue(review);
+                    name.setText("");
+                    comment.setText("");
+
+                }else{
+                    Toast.makeText(context,"Please type restaurant review!",Toast.LENGTH_SHORT);
+
+                }
+                dialog.dismiss();
+            }
+
+        });
+
     }
 
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">RestaurantFinder</string>
     <string name="person_name">Person Name</string>
-    <string name="person_rate">Person Rate</string>
+    <string name="food_rate">Food Rate</string>
+    <string name="clean_rate">Clean Rate</string>
     <string name="comments">Comments about a restaurant that we all love</string>
     <string name="word_comments">Comments</string>
     <string name="rate">RATE</string>
@@ -34,4 +35,11 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="show_restaurant_in_map">Map location</string>
+    <string name="comment">Comment:</string>
+    <string name="comment_text">What makes you love/hate this restaurant</string>
+    <string name="_1">1*</string>
+    <string name="_2">2*</string>
+    <string name="_3">3*</string>
+    <string name="_4">4*</string>
+    <string name="_5">5*</string>
 </resources>
