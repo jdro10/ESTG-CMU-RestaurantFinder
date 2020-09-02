@@ -1,23 +1,29 @@
 package ipp.estg.restaurantfinder.services;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+
+import ipp.estg.restaurantfinder.MainActivity;
+import ipp.estg.restaurantfinder.R;
+
+import static ipp.estg.restaurantfinder.MainActivity.CHANNEL_ID;
 
 public class LocationService extends Service {
 
@@ -41,12 +47,28 @@ public class LocationService extends Service {
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
                     Log.d("location", "" + location.getLatitude() + location.getLongitude());
-                    //Toast.makeText(context, location.getLatitude() + " locationCallback", Toast.LENGTH_LONG).show();
                 }
             }
         };
 
         startLocationUpdates();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("RestaurantFinder")
+                .setContentText("We are currently looking for nearby restaurants!")
+                .setSmallIcon(R.drawable.restaurant_icon)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        startForeground(1, notification);
+
+        return START_STICKY;
     }
 
     private void startLocationUpdates() {
