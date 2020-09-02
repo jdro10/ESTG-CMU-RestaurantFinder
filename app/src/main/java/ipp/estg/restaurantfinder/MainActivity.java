@@ -22,22 +22,16 @@ import ipp.estg.restaurantfinder.db.Review;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-public class MainActivity extends AppCompatActivity {
-
-
-    private Button send;
-    private TextView comentario,nomePessoa;
-    DatabaseReference ref;
-
-
-
 import ipp.estg.restaurantfinder.services.LocationService;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private TextView textView;
     public static final String CHANNEL_ID = "LocationService";
+    private Button send;
+    private TextView comentario,nomePessoa;
+    DatabaseReference ref;
 
 
     @Override
@@ -128,12 +122,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        button4.setOnClickListener(new View.OnClickListener() {
+        /*button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startService(view);
             }
-        });
+        });*/
 
     }
 
