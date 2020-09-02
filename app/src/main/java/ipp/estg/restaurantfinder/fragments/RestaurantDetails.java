@@ -7,12 +7,14 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +51,9 @@ public class RestaurantDetails extends Fragment {
     private Location location;
     DatabaseReference ref;
     private String restaurantName;
+    private int cleanRateNumber,foodRateNumber = 0;
+    private RadioGroup foodRate;
+    private RadioGroup cleanRate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,9 +137,19 @@ public class RestaurantDetails extends Fragment {
 
         EditText name = view.findViewById(R.id.person_name);
         EditText comment = view.findViewById(R.id.comment);
-        RadioGroup foodRate = view.findViewById(R.id.food_rate);
-        RadioGroup cleanRate = view.findViewById(R.id.clean_rate);
         Button submit = view.findViewById(R.id.submit_button);
+        foodRate = view.findViewById(R.id.food_group);
+        cleanRate = view.findViewById(R.id.clean_group);
+        RadioButton food1 = view.findViewById(R.id.food1);
+        RadioButton food2 = view.findViewById(R.id.food2);
+        RadioButton food3 = view.findViewById(R.id.food3);
+        RadioButton food4 = view.findViewById(R.id.food4);
+        RadioButton food5 = view.findViewById(R.id.food5);
+        RadioButton clean1 = view.findViewById(R.id.clean1);
+        RadioButton clean2 = view.findViewById(R.id.clean2);
+        RadioButton clean3 = view.findViewById(R.id.clean3);
+        RadioButton clean4 = view.findViewById(R.id.clean4);
+        RadioButton clean5 = view.findViewById(R.id.clean5);
 
         alert.setView(view);
 
@@ -147,10 +162,36 @@ public class RestaurantDetails extends Fragment {
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(comment.getText().toString())){
 
+                    int selectedFoodId = foodRate.getCheckedRadioButtonId();
+                    int selectedCleanId = cleanRate.getCheckedRadioButtonId();
+
+                    if(selectedFoodId == food1.getId()){
+                        foodRateNumber = 1;
+                    }else if(selectedFoodId == food2.getId()){
+                        foodRateNumber = 2;
+                    }else if(selectedFoodId == food3.getId()){
+                        foodRateNumber = 3;
+                    }else if(selectedFoodId == food4.getId()){
+                        foodRateNumber = 4;
+                    }else if(selectedFoodId == food5.getId()){
+                        foodRateNumber = 5;
+                    }
+
+                    if(selectedCleanId == clean1.getId()){
+                        cleanRateNumber = 1;
+                    }else if(selectedCleanId == clean2.getId()){
+                        cleanRateNumber = 2;
+                    }else if(selectedCleanId == clean3.getId()){
+                        cleanRateNumber = 3;
+                    }else if(selectedCleanId == clean4.getId()){
+                        cleanRateNumber = 4;
+                    }else if(selectedCleanId == clean5.getId()){
+                        cleanRateNumber = 5;
+                    }
+
+
                     String id = ref.push().getKey();
-                    /*Review review = new Review(name.getText().toString(),"algum restaurante",comment.getText().toString(),foodRate.getCheckedRadioButtonId(),cleanRate.getCheckedRadioButtonId());*/
-                    Review review = new Review(name.getText().toString(),restaurantName,comment.getText().toString(),5,5);
-                    //Log.d("teste",foodRate.getCheckedRadioButtonId()+"");
+                    Review review = new Review(name.getText().toString(),restaurantName,comment.getText().toString(),foodRateNumber,cleanRateNumber);
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");

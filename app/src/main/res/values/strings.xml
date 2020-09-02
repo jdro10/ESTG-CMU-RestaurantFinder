@@ -37,9 +37,9 @@
     <string name="show_restaurant_in_map">Map location</string>
     <string name="comment">Comment:</string>
     <string name="comment_text">What makes you love/hate this restaurant</string>
-    <string name="_1">1*</string>
-    <string name="_2">2*</string>
-    <string name="_3">3*</string>
-    <string name="_4">4*</string>
-    <string name="_5">5*</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
 </resources>
