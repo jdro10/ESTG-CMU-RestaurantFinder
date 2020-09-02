@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -20,8 +22,20 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
+import ipp.estg.restaurantfinder.models.Restaurant;
+import ipp.estg.restaurantfinder.models.Restaurants;
+import ipp.estg.restaurantfinder.models.SearchResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static ipp.estg.restaurantfinder.MainActivity.CHANNEL_ID;
 
@@ -30,6 +44,7 @@ public class LocationService extends Service {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private List<Restaurants> restaurants;
 
     @Override
     public void onCreate() {
@@ -46,12 +61,45 @@ public class LocationService extends Service {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    Log.d("location", "" + location.getLatitude() + location.getLongitude());
+                    getNearbyRestaurantFromAPI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), 50000);
                 }
             }
         };
 
         startLocationUpdates();
+    }
+
+    private void getNearbyRestaurantFromAPI(String latitude, String longitude, int radius) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://developers.zomato.com/api/v2.1/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
+        Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsAsc(latitude, longitude, String.valueOf(radius), "asc");
+        this.restaurants = new ArrayList<>();
+
+        call.enqueue(new Callback<SearchResponse>() {
+            @Override
+            public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
+                if (response.isSuccessful()) {
+                    restaurants.addAll(response.body().getRestaurants());
+
+                    Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                            .setContentTitle("RestaurantFinder")
+                            .setContentText("Restaurant " + restaurants.get(0).getRestaurant().getName() + " is near you, try their food today!")
+                            .setSmallIcon(R.drawable.restaurant_icon)
+                            .build();
+
+                    startForeground(1, notification);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SearchResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error fetching data from Zomato, please try again later!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
