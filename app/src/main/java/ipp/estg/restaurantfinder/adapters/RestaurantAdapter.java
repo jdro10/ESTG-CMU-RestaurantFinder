@@ -50,6 +50,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         this.favorites = favorites;
     }
 
+    public void setRestaurants(List<Restaurants> restaurants) {
+        this.restaurants = restaurants;
+    }
+
     @NonNull
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
