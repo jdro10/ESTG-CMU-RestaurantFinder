@@ -1,26 +1,46 @@
-package ipp.estg.restaurantfinder;
+package ipp.estg.restaurantfinder.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
-import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
-import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
-import ipp.estg.restaurantfinder.activities.RestaurantSelected;
+import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.db.Review;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView;
+
+    private Button send;
+    private TextView comentario,nomePessoa;
+    DatabaseReference ref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        Log.d("antes", "antes");
+        ref = database.getReference("reviews");
+
+
+        Log.d("depois", "depois");
+
+        send = findViewById(R.id.send);
+        comentario = findViewById(R.id.comentario);
+        nomePessoa = findViewById(R.id.nome_pessoa);
 
         Button button = findViewById(R.id.loginActivityButton);
         Button button1 = findViewById(R.id.restaurantButton);
@@ -58,6 +78,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "MANDEI DADOS", Toast.LENGTH_SHORT).show();
+                addReview();
+            }
+        });
+
+    }
+
+    public void addReview(){
+
+        if(!TextUtils.isEmpty(nomePessoa.getText().toString()) && !TextUtils.isEmpty(comentario.getText().toString())){
+
+            String id = ref.push().getKey();
+            Review review = new Review(nomePessoa.getText().toString(),"algum restaurante",comentario.getText().toString(),5,5);
+            ref.child(id).setValue(review);
+            nomePessoa.setText("");
+            comentario.setText("");
+
+        }else{
+            Toast.makeText(MainActivity.this,"Please type restaurant review!",Toast.LENGTH_SHORT);
+
+        }
 
     }
 }

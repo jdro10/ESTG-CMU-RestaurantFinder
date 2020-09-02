@@ -20,7 +20,7 @@
         <activity android:name=".activities.NearbyRestaurants" />
         <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.AuthenticationActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
