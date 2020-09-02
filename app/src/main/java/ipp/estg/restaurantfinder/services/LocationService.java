@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -25,10 +27,15 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.db.RestaurantDB;
+import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
@@ -43,17 +50,24 @@ import static ipp.estg.restaurantfinder.MainActivity.CHANNEL_ID;
 
 public class LocationService extends Service {
 
+    private Context context;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private List<Restaurants> restaurants;
+    private final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
+    private RestaurantDB db;
+    private List<RestaurantRoom> favoriteRestaurantsList;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        this.favoriteRestaurantsList = new ArrayList<>();
+        this.context = getApplicationContext();
         this.locationRequest = new LocationRequest();
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        this.getRestaurants();
 
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         this.locationRequest.setInterval(5000);
@@ -87,14 +101,22 @@ public class LocationService extends Service {
                 if (response.isSuccessful()) {
                     restaurants.addAll(response.body().getRestaurants());
 
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                            .setContentTitle("RestaurantFinder")
-                            .setContentText("Restaurant " + restaurants.get(0).getRestaurant().getName() + " is near you, try their food today!")
-                            .setSmallIcon(R.drawable.restaurant_icon)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    if(favoriteRestaurantsList.size() != 0) {
+                        for(int i = 0; i < restaurants.size(); i++) {
+                            for(int j = 0; j < favoriteRestaurantsList.size(); j++){
+                                if(restaurants.get(i).getRestaurant().getName().equals(favoriteRestaurantsList.get(j).getName())){
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                                            .setContentTitle("RestaurantFinder")
+                                            .setContentText("You are near - " + restaurants.get(i).getRestaurant().getName() + "! Your favorite restaurant!")
+                                            .setSmallIcon(R.drawable.restaurant_icon)
+                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-                    notificationManagerCompat.notify(1, builder.build());
+                                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+                                    notificationManagerCompat.notify(1, builder.build());
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -112,7 +134,7 @@ public class LocationService extends Service {
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("RestaurantFinder")
-                .setContentText("We are currently looking for nearby restaurants!")
+                .setContentText("We are currently looking for your nearby favorite restaurants!")
                 .setSmallIcon(R.drawable.restaurant_icon)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -134,5 +156,13 @@ public class LocationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void getRestaurants() {
+
+        db = Room.databaseBuilder(this.context, RestaurantDB.class, "RestaurantsDB").build();
+        databaseReadExecutor.execute(() -> {
+            favoriteRestaurantsList.addAll(Arrays.asList(db.daoAccess().getAll()));
+        });
     }
 }
