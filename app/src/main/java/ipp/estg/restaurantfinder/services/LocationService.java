@@ -2,6 +2,7 @@ package ipp.estg.restaurantfinder.services;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -85,13 +87,14 @@ public class LocationService extends Service {
                 if (response.isSuccessful()) {
                     restaurants.addAll(response.body().getRestaurants());
 
-                    Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                             .setContentTitle("RestaurantFinder")
                             .setContentText("Restaurant " + restaurants.get(0).getRestaurant().getName() + " is near you, try their food today!")
                             .setSmallIcon(R.drawable.restaurant_icon)
-                            .build();
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    startForeground(1, notification);
+                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+                    notificationManagerCompat.notify(1, builder.build());
                 }
             }
 

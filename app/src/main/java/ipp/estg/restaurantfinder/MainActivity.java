@@ -19,26 +19,18 @@ import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
 import ipp.estg.restaurantfinder.db.Review;
+import ipp.estg.restaurantfinder.services.LocationService;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private TextView textView;
+    public static final String CHANNEL_ID = "LocationService";
     private Button send;
     private TextView comentario,nomePessoa;
     DatabaseReference ref;
-
-
-
-import ipp.estg.restaurantfinder.services.LocationService;
-
-public class MainActivity extends AppCompatActivity {
-
-    private TextView textView;
-    public static final String CHANNEL_ID = "LocationService";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startService(view);
+            }
+        });
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,9 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 addReview();
             }
         });
-
-
-
     }
 
     public void addReview(){
@@ -126,15 +121,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,"Please type restaurant review!",Toast.LENGTH_SHORT);
 
         }
-
-
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startService(view);
-            }
-        });
-
     }
 
     public void startService(View v) {
@@ -151,6 +137,5 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(locationServiceChannel);
-
     }
 }
