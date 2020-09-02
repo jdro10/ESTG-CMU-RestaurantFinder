@@ -1,6 +1,5 @@
-package ipp.estg.restaurantfinder.activities;
+package ipp.estg.restaurantfinder;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,17 +11,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
+import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
+import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
+import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.db.Review;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 

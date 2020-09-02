@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.RadialGradient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
-import ipp.estg.restaurantfinder.activities.MainActivity;
 import ipp.estg.restaurantfinder.activities.MapActivity;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
