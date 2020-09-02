@@ -146,7 +146,7 @@ public class RestaurantsList extends Fragment {
 
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
-                Toast.makeText(context, "Error fetching data from Zomato, please try agian later!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Error fetching data from Zomato, please try again later!", Toast.LENGTH_LONG).show();
             }
         });
     }
