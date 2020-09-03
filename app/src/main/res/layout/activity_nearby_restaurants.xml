@@ -34,12 +34,6 @@
     </RelativeLayout>
 
     <fragment
-        android:name="ipp.estg.restaurantfinder.fragments.SearchFragment"
-        android:id="@+id/searchBarFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <fragment
         android:name="ipp.estg.restaurantfinder.fragments.RestaurantsList"
         android:id="@+id/nearbyRestaurantsFragment"
         android:layout_width="match_parent"

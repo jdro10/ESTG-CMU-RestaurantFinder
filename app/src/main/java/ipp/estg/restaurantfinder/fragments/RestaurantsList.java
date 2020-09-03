@@ -6,8 +6,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,6 +68,7 @@ public class RestaurantsList extends Fragment {
         this.context = getActivity();
         this.favoriteRestaurantsList = new ArrayList<>();
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
+        setHasOptionsMenu(true);
 
         this.getLastLocation();
     }
@@ -84,6 +89,27 @@ public class RestaurantsList extends Fragment {
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         return contentView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.restaurant_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                restaurantAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
     }
 
     private void getRestaurants(){
