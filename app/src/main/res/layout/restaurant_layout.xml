@@ -20,7 +20,6 @@
 
     </RelativeLayout>
 
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,35 +34,11 @@
         android:layout_marginTop="20dp"
         android:gravity="center">
 
-        <ImageView
+        <RatingBar
+            android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/star1"
-            android:src="@drawable/star_rate"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star2"
-            android:src="@drawable/star_rate"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star3"
-            android:src="@drawable/star_rate"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star4"
-            android:src="@drawable/star_rate"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star5"
-            android:src="@drawable/star_rate"/>
+             />
 
     </LinearLayout>
 
@@ -72,6 +47,36 @@
         android:layout_height="300dp"
         android:id="@+id/restaurant_selected_image"
         android:layout_gravity="center" />
+
+
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/food_rate"
+            android:text="@string/restaurant_selected"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold"
+             />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/clean_rate"
+            android:text="@string/restaurant_selected"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/avg_rate"
+        android:text="@string/restaurant_selected"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+        />
 
     <LinearLayout
         android:orientation="horizontal"

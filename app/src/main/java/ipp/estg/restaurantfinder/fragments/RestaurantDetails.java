@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +83,11 @@ public class RestaurantDetails extends Fragment {
     private Double currentLongitude;
     private Double restaurantLatitude;
     private Double restaurantLongitude;
+    private double countFood,countClean;
+    private double totalRateFood,totalRateClean;
+    private double meanFood,meanClean;
+    private TextView cleanRateText, foodRateText,avgRateText;
+    private RatingBar ratingbar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,6 +100,9 @@ public class RestaurantDetails extends Fragment {
         restaurantID = getActivity().getIntent().getExtras().getString("res_id");
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         getLastLocation();
+        Calendar rightNow = Calendar.getInstance();
+
+        Log.d("teste",rightNow.get(Calendar.HOUR_OF_DAY) + "" + rightNow.get(Calendar.MINUTE));
     }
 
     @Override
@@ -102,14 +113,25 @@ public class RestaurantDetails extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 reviewList.clear();
+                countFood = countClean = 0;
+                totalRateClean = totalRateFood = 0;
                 for(DataSnapshot review: snapshot.getChildren()){
                     Review r = review.getValue(Review.class);
                     if(r.getRestaurantId().equals(restaurantID)){
                         reviewList.add(r);
+                        countClean++;
+                        countFood++;
+                        totalRateClean += r.getCleanRate();
+                        totalRateFood += r.getFoodRate();
                     }
                 }
+                meanClean = totalRateClean/countClean;
+                meanFood = totalRateFood/countFood;
 
-                Log.d("teste",reviewList.size() + " tamanho ");
+                Log.d("VALORES","total pontuaçao tacho = " + totalRateFood + " /   " + "total votos " + countFood);
+
+                Log.d("VALORES",meanClean + " / " + meanFood);
+
             }
 
             @Override
@@ -128,7 +150,10 @@ public class RestaurantDetails extends Fragment {
         restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
         mapButton = contentView.findViewById(R.id.open_restaurant_map);
         rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
-
+        ratingbar=contentView.findViewById(R.id.ratingBar);
+        cleanRateText = contentView.findViewById(R.id.clean_rate);
+        foodRateText = contentView.findViewById(R.id.food_rate);
+        avgRateText = contentView.findViewById(R.id.avg_rate);
 
         this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -168,6 +193,20 @@ public class RestaurantDetails extends Fragment {
                     if(distanceBetweenUserAndRestaurant > 20){
                         rateButton.setEnabled(false);
                     }
+
+                    double  mean = (meanClean + meanFood)/2;
+
+                    Log.d("teste", mean + "" + "AQUI" + meanClean);
+
+                    foodRateText.setText("Food Rate: " + meanFood);
+                    cleanRateText.setText("Clean Rate: " + meanClean);
+                    avgRateText.setText("Average Rate: " + mean);
+
+
+                    ratingbar.setRating((float) mean);
+
+
+
 
                     getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
                 }
