@@ -8,6 +8,10 @@ public class Review {
     private int foodRate;
     private int cleanRate;
 
+    public Review (){
+
+    }
+
     public Review(String userId, String restaurantId, String comment, int foodRate, int cleanRate) {
         this.userId = userId;
         this.restaurantId = restaurantId;
