@@ -3,14 +3,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
+    <item android:id="@+id/action_historic"
+        android:icon="@drawable/historic"
+        android:title="Historic"
+        app:showAsAction="ifRoom|withText" />
+
     <item android:id="@+id/action_favourite"
-        android:icon="@drawable/favorite_white"
+        android:icon="@drawable/favorite"
         android:title="Favourite"
         app:showAsAction="ifRoom|withText" />
 
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/settings_white"
+        android:icon="@drawable/settings"
         android:title="Settings"
         app:showAsAction="ifRoom|withText" />
 
