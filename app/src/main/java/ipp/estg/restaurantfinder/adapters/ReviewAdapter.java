@@ -49,8 +49,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         TextView comment = holder.comment;
         ImageView photo = holder.photo;
 
-
-
+        foodRate.setText("Food Rate: " + review.getFoodRate());
+        cleanRate.setText("Clean Rate: " + review.getCleanRate());
+        comment.setText(review.getComment());
+        personName.setText(review.getUserId());
+        photo.setImageResource(R.drawable.someone);
 
     }
 

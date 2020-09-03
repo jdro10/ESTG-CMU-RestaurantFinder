@@ -23,6 +23,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +40,7 @@ import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
+import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Location;
@@ -61,6 +65,8 @@ public class RestaurantDetails extends Fragment {
     private RadioGroup cleanRate;
     private List<Review> reviewList;
     private String restaurantID;
+    private RecyclerView recyclerView;
+    private ReviewAdapter reviewAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,6 +113,15 @@ public class RestaurantDetails extends Fragment {
         restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
         mapButton = contentView.findViewById(R.id.open_restaurant_map);
         rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
+
+
+        this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        this.reviewAdapter = new ReviewAdapter(this.context,this.reviewList);
+        this.recyclerView.setAdapter(this.reviewAdapter);
+        this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://developers.zomato.com/api/v2.1/")
