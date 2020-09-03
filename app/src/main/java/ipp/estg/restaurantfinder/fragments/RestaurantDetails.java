@@ -1,7 +1,9 @@
 package ipp.estg.restaurantfinder.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -22,11 +24,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,6 +74,12 @@ public class RestaurantDetails extends Fragment {
     private String restaurantID;
     private RecyclerView recyclerView;
     private ReviewAdapter reviewAdapter;
+    private static final int REQUEST_FINE_LOCATION = 100;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Double currentLatitude;
+    private Double currentLongitude;
+    private Double restaurantLatitude;
+    private Double restaurantLongitude;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +90,8 @@ public class RestaurantDetails extends Fragment {
         ref = database.getReference("reviews");
         reviewList = new ArrayList<>();
         restaurantID = getActivity().getIntent().getExtras().getString("res_id");
+        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
+        getLastLocation();
     }
 
     @Override
@@ -145,6 +160,14 @@ public class RestaurantDetails extends Fragment {
                     }
 
                     location = response.body().getLocation();
+
+                    restaurantLatitude = Double.parseDouble(location.getLatitude());
+                    restaurantLongitude = Double.parseDouble(location.getLongitude());
+                    double distanceBetweenUserAndRestaurant = distance(restaurantLatitude,restaurantLongitude,currentLatitude,currentLongitude);
+                    Log.d("teste",distanceBetweenUserAndRestaurant + "");
+                    if(distanceBetweenUserAndRestaurant > 20){
+                        rateButton.setEnabled(false);
+                    }
 
                     getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
                 }
@@ -283,5 +306,53 @@ public class RestaurantDetails extends Fragment {
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
+
+    }
+    private void getLastLocation() {
+        if(ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+            return;
+        }
+
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<android.location.Location>() {
+                    @Override
+                    public void onSuccess(android.location.Location location) {
+                        if(location != null){
+                            currentLatitude = location.getLatitude();
+                            currentLongitude = location.getLongitude();
+
+                        }
+                    }
+                }).addOnFailureListener(getActivity(), new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, "Couldn't get your location. Try again later!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+    }
+
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+
+        dist = dist * 1.609344;
+
+        return (dist);
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 }
