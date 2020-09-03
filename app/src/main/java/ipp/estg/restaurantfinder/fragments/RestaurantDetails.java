@@ -23,15 +23,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
+import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Location;
@@ -54,6 +63,10 @@ public class RestaurantDetails extends Fragment {
     private int cleanRateNumber,foodRateNumber = 0;
     private RadioGroup foodRate;
     private RadioGroup cleanRate;
+    private List<Review> reviewList;
+    private String restaurantID;
+    private RecyclerView recyclerView;
+    private ReviewAdapter reviewAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +75,33 @@ public class RestaurantDetails extends Fragment {
         this.context = getActivity();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         ref = database.getReference("reviews");
+        reviewList = new ArrayList<>();
+        restaurantID = getActivity().getIntent().getExtras().getString("res_id");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                reviewList.clear();
+                for(DataSnapshot review: snapshot.getChildren()){
+                    Review r = review.getValue(Review.class);
+                    if(r.getRestaurantId().equals(restaurantID)){
+                        reviewList.add(r);
+                    }
+                }
+
+                Log.d("teste",reviewList.size() + " tamanho ");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Nullable
@@ -74,6 +114,15 @@ public class RestaurantDetails extends Fragment {
         mapButton = contentView.findViewById(R.id.open_restaurant_map);
         rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
 
+
+        this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        this.reviewAdapter = new ReviewAdapter(this.context,this.reviewList);
+        this.recyclerView.setAdapter(this.reviewAdapter);
+        this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://developers.zomato.com/api/v2.1/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -81,7 +130,7 @@ public class RestaurantDetails extends Fragment {
 
         ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
 
-        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(getActivity().getIntent().getExtras().getString("res_id")));
+        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(restaurantID));
 
         call.enqueue(new Callback<Restaurant>() {
             @Override
@@ -191,7 +240,7 @@ public class RestaurantDetails extends Fragment {
 
 
                     String id = ref.push().getKey();
-                    Review review = new Review(name.getText().toString(),restaurantName,comment.getText().toString(),foodRateNumber,cleanRateNumber);
+                    Review review = new Review(name.getText().toString(),restaurantID,comment.getText().toString(),foodRateNumber,cleanRateNumber);
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");
