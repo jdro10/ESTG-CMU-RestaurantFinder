@@ -69,11 +69,12 @@ public class LocationService extends Service {
         this.context = getApplicationContext();
         this.locationRequest = new LocationRequest();
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         this.getRestaurants();
 
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        this.locationRequest.setInterval(6000);
-        this.locationRequest.setFastestInterval(60000);
+        this.locationRequest.setInterval(5000);
+        this.locationRequest.setFastestInterval(5000);
 
         locationCallback = new LocationCallback() {
             @Override

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
@@ -202,13 +203,10 @@ public class RestaurantDetails extends Fragment {
                     cleanRateText.setText("Clean Rate: " + meanClean);
                     avgRateText.setText("Average Rate: " + mean);
 
-
                     ratingbar.setRating((float) mean);
 
-
-
-
-                    getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.INVISIBLE);
+                    getActivity().findViewById(R.id.restaurant_details_linear_layout).setVisibility(View.VISIBLE);
                 }
             }
 
