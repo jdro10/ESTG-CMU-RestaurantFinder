@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -77,13 +78,20 @@ public class AuthenticationActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.forgot_password_layout, null);
 
-        TextInputEditText forgotPasswordEmail = findViewById(R.id.forgotPasswordEmail);
-        Button newPasswordButton = findViewById(R.id.requestPasswordEmail);
+        TextInputEditText forgotPasswordEmail = view.findViewById(R.id.forgotPasswordEmail);
+        Button newPasswordButton = view.findViewById(R.id.requestPasswordEmail);
 
         alert.setView(view);
 
         AlertDialog dialog = alert.create();
         dialog.show();
+
+        newPasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetPassword(forgotPasswordEmail.getText().toString());
+            }
+        });
     }
 
     private void signIn(String email, String password) {
@@ -126,5 +134,19 @@ public class AuthenticationActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void resetPassword(String email) {
+        this.firebaseAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(), "To reset your password, check your email.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }
