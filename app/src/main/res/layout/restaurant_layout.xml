@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -8,7 +9,7 @@
         android:id="@+id/loadingPanelRestaurantDetails"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
+        android:layout_gravity="center" >
 
         <ProgressBar
             android:id="@+id/loading_progress_xml"
@@ -20,104 +21,109 @@
 
     </RelativeLayout>
 
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/restaurant_selected"
-        android:text="@string/restaurant_selected"
-        android:gravity="center_horizontal" />
-
     <LinearLayout
+        android:id="@+id/restaurant_details_linear_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/restaurant_selected"
+            android:text="@string/restaurant_selected"
+            android:gravity="center_horizontal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/star1"
+                android:src="@drawable/star_rate"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/star2"
+                android:src="@drawable/star_rate"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/star3"
+                android:src="@drawable/star_rate"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/star4"
+                android:src="@drawable/star_rate"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/star5"
+                android:src="@drawable/star_rate"/>
+
+        </LinearLayout>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star1"
-            android:src="@drawable/star_rate"/>
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:id="@+id/restaurant_selected_image"
+            android:layout_gravity="center" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star2"
-            android:src="@drawable/star_rate"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:paddingLeft="4.0dp"
+            android:paddingTop="5.0dp"
+            android:paddingRight="4.0dp"
+            android:paddingBottom="1.0dp"
+            android:layout_width="fill_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star3"
-            android:src="@drawable/star_rate"/>
+            <Button
+                android:id="@+id/check_menu_restaurant"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="@string/menu"
+                android:layout_weight="1.0" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/star4"
-            android:src="@drawable/star_rate"/>
+            <Button
+                android:id="@+id/rate_restaurant_selected"
+                android:layout_width="0.0dip" android:layout_height="fill_parent"
+                android:text="@string/rate"
+                android:layout_weight="1.0" />
 
-        <ImageView
+            <Button
+                android:id="@+id/open_restaurant_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_restaurant_in_map" />
+
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/star5"
-            android:src="@drawable/star_rate"/>
+            android:text="@string/word_comments"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:id="@+id/classifications_restaurant_selected"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:id="@+id/restaurant_selected_image"
-        android:layout_gravity="center" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingLeft="4.0dp"
-        android:paddingTop="5.0dp"
-        android:paddingRight="4.0dp"
-        android:paddingBottom="1.0dp"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
-
-        <Button
-            android:id="@+id/check_menu_restaurant"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="@string/menu"
-            android:layout_weight="1.0" />
-
-        <Button
-            android:id="@+id/rate_restaurant_selected"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="@string/rate"
-            android:layout_weight="1.0" />
-
-        <Button
-            android:id="@+id/open_restaurant_map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/show_restaurant_in_map" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/word_comments"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:id="@+id/classifications_restaurant_selected"
-        android:layout_height="match_parent"/>
-
-
-
 
 </LinearLayout>

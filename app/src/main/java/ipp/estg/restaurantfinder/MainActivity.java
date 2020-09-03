@@ -18,6 +18,7 @@ import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
+import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.services.LocationService;
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Button button2 = findViewById(R.id.favoritesActivity);
         Button button3 = findViewById(R.id.restaurant_details);
         Button button4 = findViewById(R.id.startService);
+        Button button5 = findViewById(R.id.openWebView);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +98,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startService(view);
+            }
+        });
+
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -169,7 +170,8 @@ public class RestaurantDetails extends Fragment {
                         rateButton.setEnabled(false);
                     }
 
-                    getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.loadingPanelRestaurantDetails).setVisibility(View.INVISIBLE);
+                    getActivity().findViewById(R.id.restaurant_details_linear_layout).setVisibility(View.VISIBLE);
                 }
             }
 
