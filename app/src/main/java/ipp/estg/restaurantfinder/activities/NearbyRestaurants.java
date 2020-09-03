@@ -47,6 +47,9 @@ public class NearbyRestaurants extends AppCompatActivity {
         }else if(id == R.id.action_favourite){
             Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
             startActivity(intent);
+        }else if(id == R.id.action_historic){
+            Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
