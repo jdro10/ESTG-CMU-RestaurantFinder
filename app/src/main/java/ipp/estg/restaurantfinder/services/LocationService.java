@@ -2,16 +2,16 @@ package ipp.estg.restaurantfinder.services;
 
 import android.Manifest;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -26,9 +26,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,7 +39,6 @@ import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
-import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
 import ipp.estg.restaurantfinder.models.SearchResponse;
 import retrofit2.Call;
@@ -58,6 +59,7 @@ public class LocationService extends Service {
     private final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
     private RestaurantDB db;
     private List<RestaurantRoom> favoriteRestaurantsList;
+    private Bitmap restaurantBitmap;
 
     @Override
     public void onCreate() {
@@ -101,18 +103,27 @@ public class LocationService extends Service {
                 if (response.isSuccessful()) {
                     restaurants.addAll(response.body().getRestaurants());
 
-                    if(favoriteRestaurantsList.size() != 0) {
-                        for(int i = 0; i < restaurants.size(); i++) {
-                            for(int j = 0; j < favoriteRestaurantsList.size(); j++){
-                                if(restaurants.get(i).getRestaurant().getName().equals(favoriteRestaurantsList.get(j).getName())){
+                    if (favoriteRestaurantsList.size() != 0) {
+                        for (int i = 0; i < restaurants.size(); i++) {
+                            for (int j = 0; j < favoriteRestaurantsList.size(); j++) {
+
+                                try {
+                                    new GetRestaurantImage().execute(response.body().getRestaurants().get(i).getRestaurant().getThumb()).get();
+                                } catch (ExecutionException | InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (restaurants.get(i).getRestaurant().getName().equals(favoriteRestaurantsList.get(j).getName())) {
                                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                                             .setContentTitle("RestaurantFinder")
                                             .setContentText("You are near - " + restaurants.get(i).getRestaurant().getName() + "! Your favorite restaurant!")
                                             .setSmallIcon(R.drawable.restaurant_icon)
-                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                            .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(restaurantBitmap))
+                                            .setOngoing(false);
 
                                     NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-                                    notificationManagerCompat.notify(1, builder.build());
+                                    notificationManagerCompat.notify(2, builder.build());
                                 }
                             }
                         }
@@ -164,5 +175,28 @@ public class LocationService extends Service {
         databaseReadExecutor.execute(() -> {
             favoriteRestaurantsList.addAll(Arrays.asList(db.daoAccess().getAll()));
         });
+    }
+
+    private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            Bitmap bitmap = null;
+
+            try {
+                InputStream inputStream = new java.net.URL(strings[0]).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            restaurantBitmap = bitmap;
+        }
     }
 }
