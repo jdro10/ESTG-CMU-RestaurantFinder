@@ -72,8 +72,8 @@ public class LocationService extends Service {
         this.getRestaurants();
 
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        this.locationRequest.setInterval(5000);
-        this.locationRequest.setFastestInterval(5000);
+        this.locationRequest.setInterval(6000);
+        this.locationRequest.setFastestInterval(60000);
 
         locationCallback = new LocationCallback() {
             @Override

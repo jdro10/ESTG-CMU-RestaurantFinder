@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,10 +31,11 @@ import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.models.Restaurants;
 
-public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> {
+public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> implements Filterable {
 
     private Context context;
     private List<Restaurants> restaurants;
+    private List<Restaurants> allRestaurants;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
     private RestaurantDB db;
     private List<RestaurantRoom> favorites;
@@ -48,10 +52,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         this.context = context;
         this.restaurants = restaurants;
         this.favorites = favorites;
+        this.allRestaurants = restaurants;
     }
 
     public void setRestaurants(List<Restaurants> restaurants) {
         this.restaurants = restaurants;
+        this.allRestaurants.addAll(restaurants);
     }
 
     @NonNull
@@ -136,6 +142,43 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     public int getItemViewType(int position) {
         return position;
     }
+
+    @Override
+    public Filter getFilter() {
+        return cuisineFilter;
+    }
+
+    private Filter cuisineFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Restaurants> filteredRestaurants = new ArrayList<>();
+
+            if(charSequence == null || charSequence.length() == 0) {
+                filteredRestaurants.addAll(allRestaurants);
+                restaurants.addAll(allRestaurants);
+            } else {
+                String cuisineType = charSequence.toString().toLowerCase().trim();
+
+                for(Restaurants restaurant: allRestaurants) {
+                    if(restaurant.getRestaurant().getCuisines().toLowerCase().contains(cuisineType)) {
+                        filteredRestaurants.add(restaurant);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredRestaurants;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            restaurants.clear();
+            restaurants.addAll((List) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
