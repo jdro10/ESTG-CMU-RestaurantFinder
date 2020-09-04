@@ -30,6 +30,10 @@ public class Restaurant {
     private String thumb;
     @SerializedName("user_ratings")
     private UserRating userRating;
+    @SerializedName("photos_url")
+    private String photosUrl;
+    @SerializedName("menu_url")
+    private String menuUrl;
     @SerializedName("featured_image")
     private String featuredImage;
     @SerializedName("has_online_delivery")
@@ -167,6 +171,22 @@ public class Restaurant {
         this.name = name;
     }
 
+    public String getPhotosUrl() {
+        return photosUrl;
+    }
+
+    public void setPhotosUrl(String photosUrl) {
+        this.photosUrl = photosUrl;
+    }
+
+    public String getMenuUrl() {
+        return menuUrl;
+    }
+
+    public void setMenuUrl(String menuUrl) {
+        this.menuUrl = menuUrl;
+    }
+
     @Override
     public String toString() {
         return "Restaurant{" +
@@ -182,6 +202,8 @@ public class Restaurant {
                 ", highlights=" + Arrays.toString(highlights) +
                 ", thumb='" + thumb + '\'' +
                 ", userRating=" + userRating +
+                ", photosUrl='" + photosUrl + '\'' +
+                ", menuUrl='" + menuUrl + '\'' +
                 ", featuredImage='" + featuredImage + '\'' +
                 ", hasOnlineDelivery='" + hasOnlineDelivery + '\'' +
                 ", isTableReservationSupported=" + isTableReservationSupported +
