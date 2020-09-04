@@ -48,7 +48,7 @@ public class FavoritesRestaurants extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
             startActivity(intent);
         }else if(id == R.id.action_historic){
-            Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
+            Intent intent = new Intent(getApplicationContext(),HistoricActivity.class);
             startActivity(intent);
         }
 
