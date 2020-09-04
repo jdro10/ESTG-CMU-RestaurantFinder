@@ -58,7 +58,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
@@ -68,7 +67,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
             startActivity(intent);
         }else if(id == R.id.action_historic){
-            Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
+            Intent intent = new Intent(getApplicationContext(),HistoricActivity.class);
             startActivity(intent);
         }
 

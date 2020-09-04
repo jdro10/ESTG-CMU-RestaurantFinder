@@ -363,7 +363,8 @@ public class RestaurantDetails extends Fragment {
 
                     String date = rightNow.get(Calendar.DAY_OF_MONTH) + "/" + rightNow.get(Calendar.MONTH) + "/" + rightNow.get(Calendar.YEAR) + "    "  + rightNow.get(Calendar.HOUR_OF_DAY) + ":" + rightNow.get(Calendar.MINUTE);
 
-                    HistoricRoom historic  = new HistoricRoom(restaurantID,restaurantName,date,food,22.4);
+                    HistoricRoom historic  = new HistoricRoom(restaurantID,restaurantName,date,food,Double.parseDouble(numberKM.getText().toString()));
+                    Log.d("QUERO VER",restaurantID + restaurantName + date + food + numberKM.getText().toString());
                     /*Double.parseDouble(numberKM.getText().toString())*/
 
                     makeHistoric(historic);
