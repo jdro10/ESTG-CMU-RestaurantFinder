@@ -1,6 +1,7 @@
 package ipp.estg.restaurantfinder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -19,11 +20,18 @@ import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
 import ipp.estg.restaurantfinder.activities.WebViewActivity;
+import ipp.estg.restaurantfinder.db.HistoricDB;
+import ipp.estg.restaurantfinder.db.HistoricRoom;
+import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.services.LocationService;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import ipp.estg.restaurantfinder.services.LocationService;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,12 +41,24 @@ public class MainActivity extends AppCompatActivity {
     private Button send;
     private TextView comentario,nomePessoa;
     DatabaseReference ref;
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private HistoricDB db;
+
+    private void makeHistoric() {
+
+        Log.d("ENTREI AQUI MANUUUU","yah manuh");
+        HistoricRoom historic  = new HistoricRoom("restaurante"," mm","date","food",22.4);
+        db = Room.databaseBuilder(getApplicationContext(), HistoricDB.class, "HistoricsDB").build();
+        databaseWriterExecutor.execute(() -> {
+            db.daoAccess().insertHistoric(historic);
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        makeHistoric();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 

@@ -68,8 +68,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RestaurantDetails extends Fragment {
-
     private Context context;
+
     private TextView restaurant_selected;
     private ImageView restaurantImage;
     private Button mapButton, rateButton;
@@ -101,6 +101,15 @@ public class RestaurantDetails extends Fragment {
     private HistoricDB db;
     private String menuUrl;
 
+
+    private void makeHistoric(HistoricRoom historicRoom) {
+
+        Log.d("ENTREI AQUI MANUUUU","yah manuh");
+        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
+        databaseWriterExecutor.execute(() -> {
+            db.daoAccess().insertHistoric(historicRoom);
+        });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -375,8 +384,8 @@ public class RestaurantDetails extends Fragment {
         });
 
     }
-
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
+
 
         private ImageView imageView;
 
@@ -403,7 +412,6 @@ public class RestaurantDetails extends Fragment {
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
-
     }
 
     private void getLastLocation() {
@@ -452,14 +460,5 @@ public class RestaurantDetails extends Fragment {
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
-    }
-
-    private void makeHistoric(HistoricRoom historicRoom) {
-
-        Log.d("ENTREI AQUI MANUUUU","yah manuh");
-        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricDB").build();
-        databaseWriterExecutor.execute(() -> {
-            db.daoAccess().insertHistoric(historicRoom);
-        });
     }
 }
