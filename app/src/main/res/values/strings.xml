@@ -42,4 +42,10 @@
     <string name="_3">3</string>
     <string name="_4">4</string>
     <string name="_5">5</string>
+    <string name="type_of_meal">Type of Meal</string>
+    <string name="hotdog">HotDog</string>
+    <string name="lasagna">Lasagna</string>
+    <string name="pizza">Pizza</string>
+    <string name="hamburguer">Hamburguer</string>
+    <string name="other">Other</string>
 </resources>
