@@ -36,7 +36,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private Context context;
     private List<Restaurants> restaurants;
     private List<Restaurants> allRestaurants;
-    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(2);
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private RestaurantDB db;
     private List<RestaurantRoom> favorites;
 

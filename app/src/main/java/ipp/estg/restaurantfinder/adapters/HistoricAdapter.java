@@ -1,6 +1,7 @@
 package ipp.estg.restaurantfinder.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
     public HistoricAdapter(Context context, List<HistoricRoom> historic) {
         this.context = context;
         this.historic = historic;
+        Log.d("ENTREI AQUI MANUUUU",historic.size()+"");
     }
 
     @NonNull
