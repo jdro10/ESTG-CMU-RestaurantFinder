@@ -53,14 +53,13 @@ import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
 import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
 import ipp.estg.restaurantfinder.db.Review;
+import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Location;
 import ipp.estg.restaurantfinder.models.Restaurant;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestaurantDetails extends Fragment {
 
@@ -164,12 +163,7 @@ public class RestaurantDetails extends Fragment {
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://developers.zomato.com/api/v2.1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
+        ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
 
         Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(restaurantID));
 

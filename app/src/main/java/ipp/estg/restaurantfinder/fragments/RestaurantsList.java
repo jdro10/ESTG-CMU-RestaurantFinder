@@ -38,14 +38,13 @@ import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
+import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
 import ipp.estg.restaurantfinder.models.Restaurants;
 import ipp.estg.restaurantfinder.models.SearchResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestaurantsList extends Fragment {
 
@@ -150,12 +149,9 @@ public class RestaurantsList extends Fragment {
     }
 
     private void getRestaurantsFromAPI(String latitude, String longitude, int radius) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://developers.zomato.com/api/v2.1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
+        ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
+
         Call<SearchResponse> call = zomatoapi.getNearbyRestaurants(latitude, longitude, String.valueOf(radius));
         this.searchResponseList = new ArrayList<>();
 
