@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.google.android.gms.location.LocationServices;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -38,7 +41,9 @@ import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
+import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
+import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
 import ipp.estg.restaurantfinder.models.SearchResponse;
 import retrofit2.Call;
@@ -73,14 +78,18 @@ public class LocationService extends Service {
         this.getRestaurants();
 
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        this.locationRequest.setInterval(5000);
-        this.locationRequest.setFastestInterval(5000);
+        this.locationRequest.setInterval(1800000);
+        this.locationRequest.setFastestInterval(1800000);
+
+        Date currentTime = Calendar.getInstance().getTime();
 
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    getNearbyRestaurantFromAPI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), 50000);
+                    if ((currentTime.getHours() <= 11 && currentTime.getHours() <= 15) || currentTime.getHours() <= 18 && currentTime.getHours() <= 22) {
+                        getNearbyRestaurantFromAPI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), 50000);
+                    }
                 }
             }
         };
@@ -89,12 +98,7 @@ public class LocationService extends Service {
     }
 
     private void getNearbyRestaurantFromAPI(String latitude, String longitude, int radius) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://developers.zomato.com/api/v2.1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ZomatoApi zomatoapi = retrofit.create(ZomatoApi.class);
+        ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
         Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsAsc(latitude, longitude, String.valueOf(radius), "asc");
         this.restaurants = new ArrayList<>();
 
@@ -107,24 +111,8 @@ public class LocationService extends Service {
                     if (favoriteRestaurantsList.size() != 0) {
                         for (int i = 0; i < restaurants.size(); i++) {
                             for (int j = 0; j < favoriteRestaurantsList.size(); j++) {
-
-                                try {
-                                    new GetRestaurantImage().execute(response.body().getRestaurants().get(i).getRestaurant().getThumb()).get();
-                                } catch (ExecutionException | InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
                                 if (restaurants.get(i).getRestaurant().getName().equals(favoriteRestaurantsList.get(j).getName())) {
-                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                                            .setContentTitle("RestaurantFinder")
-                                            .setContentText("You are near - " + restaurants.get(i).getRestaurant().getName() + "! Your favorite restaurant!")
-                                            .setSmallIcon(R.drawable.restaurant_icon)
-                                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                            .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(restaurantBitmap))
-                                            .setOngoing(false);
-
-                                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-                                    notificationManagerCompat.notify(2, builder.build());
+                                    new GetRestaurantImage(restaurants.get(i).getRestaurant().getName()).execute(response.body().getRestaurants().get(i).getRestaurant().getThumb());
                                 }
                             }
                         }
@@ -180,6 +168,12 @@ public class LocationService extends Service {
 
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
 
+        private String restaurantName;
+
+        public GetRestaurantImage(String restaurantName) {
+            this.restaurantName = restaurantName;
+        }
+
         @Override
         protected Bitmap doInBackground(String... strings) {
             Bitmap bitmap = null;
@@ -198,6 +192,17 @@ public class LocationService extends Service {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             restaurantBitmap = bitmap;
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setContentTitle("RestaurantFinder")
+                    .setContentText("You are near - " + this.restaurantName + "! Your favorite restaurant!")
+                    .setSmallIcon(R.drawable.restaurant_icon)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(restaurantBitmap))
+                    .setOngoing(false);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+            notificationManagerCompat.notify(2, builder.build());
         }
     }
 }
