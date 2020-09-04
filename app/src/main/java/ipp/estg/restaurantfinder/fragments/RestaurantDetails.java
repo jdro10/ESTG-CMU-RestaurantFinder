@@ -70,8 +70,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestaurantDetails extends Fragment {
-
     private Context context;
+
     private TextView restaurant_selected;
     private ImageView restaurantImage;
     private Button mapButton,rateButton;
@@ -100,6 +100,15 @@ public class RestaurantDetails extends Fragment {
     private String food;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
+
+    private void makeHistoric(HistoricRoom historicRoom) {
+
+        Log.d("ENTREI AQUI MANUUUU","yah manuh");
+        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
+        databaseWriterExecutor.execute(() -> {
+            db.daoAccess().insertHistoric(historicRoom);
+        });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -211,7 +220,7 @@ public class RestaurantDetails extends Fragment {
                     foodRateText.setText("Food Rate: " + meanFood);
                     cleanRateText.setText("Clean Rate: " + meanClean);
                     avgRateText.setText("Average Rate: " + mean);
-                    
+
 
                     ratingbar.setRating((float) mean);
 
@@ -369,8 +378,8 @@ public class RestaurantDetails extends Fragment {
         });
 
     }
-
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
+
 
         private ImageView imageView;
 
@@ -397,8 +406,8 @@ public class RestaurantDetails extends Fragment {
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
-
     }
+
     private void getLastLocation() {
         if(ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions();
@@ -445,14 +454,5 @@ public class RestaurantDetails extends Fragment {
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
-    }
-
-    private void makeHistoric(HistoricRoom historicRoom) {
-
-        Log.d("ENTREI AQUI MANUUUU","yah manuh");
-        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricDB").build();
-        databaseWriterExecutor.execute(() -> {
-            db.daoAccess().insertHistoric(historicRoom);
-        });
     }
 }

@@ -53,13 +53,9 @@ public class Historic extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.reviews_fragment, container, false);
 
-        this.recyclerView = contentView.findViewById(R.id.reviewsRecyclerView);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        Log.d("ENTREI AQUI MANUUUU",historicRoomList.size()+"");
-
-        this.historicAdapter = new HistoricAdapter(this.context, this.historicRoomList);
-
+        this.recyclerView = contentView.findViewById(R.id.historicRecyclerView);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(contentView.getContext()));
+        this.historicAdapter = new HistoricAdapter(this.context, historicRoomList);
         this.recyclerView.setAdapter(this.historicAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
@@ -69,7 +65,7 @@ public class Historic extends Fragment {
 
     private void getHistoric() {
 
-        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricDB").build();
+        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
         databaseReadExecutor.execute(() -> {
             historicRoomList.addAll(Arrays.asList(db.daoAccess().getAll()));
         });

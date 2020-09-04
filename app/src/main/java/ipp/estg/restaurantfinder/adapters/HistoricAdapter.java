@@ -23,8 +23,8 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
     public HistoricAdapter(Context context, List<HistoricRoom> historic) {
         this.context = context;
         this.historic = historic;
-        Log.d("ENTREI AQUI MANUUUU",historic.size()+"");
     }
+
 
     @NonNull
     @Override
