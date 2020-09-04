@@ -202,6 +202,7 @@ public class RestaurantDetails extends Fragment {
                     foodRateText.setText("Food Rate: " + meanFood);
                     cleanRateText.setText("Clean Rate: " + meanClean);
                     avgRateText.setText("Average Rate: " + mean);
+                    
 
                     ratingbar.setRating((float) mean);
 

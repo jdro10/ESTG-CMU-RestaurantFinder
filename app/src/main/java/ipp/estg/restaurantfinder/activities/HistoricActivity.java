@@ -11,12 +11,12 @@ import android.view.MenuItem;
 
 import ipp.estg.restaurantfinder.R;
 
-public class NearbyRestaurants extends AppCompatActivity {
+public class HistoricActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nearby_restaurants);
+        setContentView(R.layout.activity_historic);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -48,7 +48,7 @@ public class NearbyRestaurants extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
             startActivity(intent);
         }else if(id == R.id.action_historic){
-            Intent intent = new Intent(getApplicationContext(),HistoricActivity.class);
+            Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
             startActivity(intent);
         }
 
