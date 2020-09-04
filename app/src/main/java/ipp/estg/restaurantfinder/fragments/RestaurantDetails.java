@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
@@ -51,6 +49,7 @@ import java.util.Objects;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
+import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
@@ -66,11 +65,12 @@ public class RestaurantDetails extends Fragment {
     private Context context;
     private TextView restaurant_selected;
     private ImageView restaurantImage;
-    private Button mapButton,rateButton;
+    private Button mapButton, rateButton;
+    private Button menuButton;
     private Location location;
     DatabaseReference ref;
     private String restaurantName;
-    private int cleanRateNumber,foodRateNumber = 0;
+    private int cleanRateNumber, foodRateNumber = 0;
     private RadioGroup foodRate;
     private RadioGroup cleanRate;
     private List<Review> reviewList;
@@ -83,11 +83,12 @@ public class RestaurantDetails extends Fragment {
     private Double currentLongitude;
     private Double restaurantLatitude;
     private Double restaurantLongitude;
-    private double countFood,countClean;
-    private double totalRateFood,totalRateClean;
-    private double meanFood,meanClean;
-    private TextView cleanRateText, foodRateText,avgRateText;
+    private double countFood, countClean;
+    private double totalRateFood, totalRateClean;
+    private double meanFood, meanClean;
+    private TextView cleanRateText, foodRateText, avgRateText;
     private RatingBar ratingbar;
+    private String menuUrl;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class RestaurantDetails extends Fragment {
         getLastLocation();
         Calendar rightNow = Calendar.getInstance();
 
-        Log.d("teste",rightNow.get(Calendar.HOUR_OF_DAY) + "" + rightNow.get(Calendar.MINUTE));
+        Log.d("teste", rightNow.get(Calendar.HOUR_OF_DAY) + "" + rightNow.get(Calendar.MINUTE));
     }
 
     @Override
@@ -115,9 +116,9 @@ public class RestaurantDetails extends Fragment {
                 reviewList.clear();
                 countFood = countClean = 0;
                 totalRateClean = totalRateFood = 0;
-                for(DataSnapshot review: snapshot.getChildren()){
+                for (DataSnapshot review : snapshot.getChildren()) {
                     Review r = review.getValue(Review.class);
-                    if(r.getRestaurantId().equals(restaurantID)){
+                    if (r.getRestaurantId().equals(restaurantID)) {
                         reviewList.add(r);
                         countClean++;
                         countFood++;
@@ -125,12 +126,12 @@ public class RestaurantDetails extends Fragment {
                         totalRateFood += r.getFoodRate();
                     }
                 }
-                meanClean = totalRateClean/countClean;
-                meanFood = totalRateFood/countFood;
+                meanClean = totalRateClean / countClean;
+                meanFood = totalRateFood / countFood;
 
-                Log.d("VALORES","total pontuaçao tacho = " + totalRateFood + " /   " + "total votos " + countFood);
+                Log.d("VALORES", "total pontuaçao tacho = " + totalRateFood + " /   " + "total votos " + countFood);
 
-                Log.d("VALORES",meanClean + " / " + meanFood);
+                Log.d("VALORES", meanClean + " / " + meanFood);
 
             }
 
@@ -150,22 +151,23 @@ public class RestaurantDetails extends Fragment {
         restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
         mapButton = contentView.findViewById(R.id.open_restaurant_map);
         rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
-        ratingbar=contentView.findViewById(R.id.ratingBar);
+        ratingbar = contentView.findViewById(R.id.ratingBar);
         cleanRateText = contentView.findViewById(R.id.clean_rate);
         foodRateText = contentView.findViewById(R.id.food_rate);
         avgRateText = contentView.findViewById(R.id.avg_rate);
+        menuButton = contentView.findViewById(R.id.check_menu_restaurant);
 
         this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        this.reviewAdapter = new ReviewAdapter(this.context,this.reviewList);
+        this.reviewAdapter = new ReviewAdapter(this.context, this.reviewList);
         this.recyclerView.setAdapter(this.reviewAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
 
-        Call<Restaurant> call = zomatoapi.getRestaurant(Objects.requireNonNull(restaurantID));
+        Call<Restaurant> call = zomatoapi.getIndividualRestaurant(Objects.requireNonNull(restaurantID));
 
         call.enqueue(new Callback<Restaurant>() {
             @Override
@@ -173,30 +175,32 @@ public class RestaurantDetails extends Fragment {
                 if (response.isSuccessful()) {
                     restaurant_selected.setText(response.body().getName());
                     restaurantName = response.body().getName();
-                    if (response.body().getThumb().equals("")) {
+                    menuUrl = response.body().getMenuUrl();
+
+                    if (response.body().getFeaturedImage().equals("")) {
                         restaurantImage.setImageResource(R.drawable.no_image);
                     } else {
-                        new GetRestaurantImage(restaurantImage).execute(response.body().getThumb());
+                        new GetRestaurantImage(restaurantImage).execute(response.body().getFeaturedImage());
                     }
 
                     location = response.body().getLocation();
 
                     restaurantLatitude = Double.parseDouble(location.getLatitude());
                     restaurantLongitude = Double.parseDouble(location.getLongitude());
-                    double distanceBetweenUserAndRestaurant = distance(restaurantLatitude,restaurantLongitude,currentLatitude,currentLongitude);
-                    Log.d("teste",distanceBetweenUserAndRestaurant + "");
-                    if(distanceBetweenUserAndRestaurant > 20){
+                    double distanceBetweenUserAndRestaurant = distance(restaurantLatitude, restaurantLongitude, currentLatitude, currentLongitude);
+                    Log.d("teste", distanceBetweenUserAndRestaurant + "");
+                    if (distanceBetweenUserAndRestaurant > 20) {
                         rateButton.setEnabled(false);
                     }
 
-                    double  mean = (meanClean + meanFood)/2;
+                    double mean = (meanClean + meanFood) / 2;
 
                     Log.d("teste", mean + "" + "AQUI" + meanClean);
 
                     foodRateText.setText("Food Rate: " + meanFood);
                     cleanRateText.setText("Clean Rate: " + meanClean);
                     avgRateText.setText("Average Rate: " + mean);
-                    
+
 
                     ratingbar.setRating((float) mean);
 
@@ -207,7 +211,15 @@ public class RestaurantDetails extends Fragment {
 
             @Override
             public void onFailure(Call<Restaurant> call, Throwable t) {
+            }
+        });
 
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent webViewintent = new Intent(getContext(), WebViewActivity.class);
+                webViewintent.putExtra("url", menuUrl);
+                startActivity(webViewintent);
             }
         });
 
@@ -232,12 +244,12 @@ public class RestaurantDetails extends Fragment {
         return contentView;
     }
 
-    private void rateDialog(){
+    private void rateDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_NoActionBar);
         alert.setTitle("Rate");
 
         LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.rate_dialog,null);
+        View view = inflater.inflate(R.layout.rate_dialog, null);
 
         EditText name = view.findViewById(R.id.person_name);
         EditText comment = view.findViewById(R.id.comment);
@@ -264,44 +276,44 @@ public class RestaurantDetails extends Fragment {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(comment.getText().toString())){
+                if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(comment.getText().toString())) {
 
                     int selectedFoodId = foodRate.getCheckedRadioButtonId();
                     int selectedCleanId = cleanRate.getCheckedRadioButtonId();
 
-                    if(selectedFoodId == food1.getId()){
+                    if (selectedFoodId == food1.getId()) {
                         foodRateNumber = 1;
-                    }else if(selectedFoodId == food2.getId()){
+                    } else if (selectedFoodId == food2.getId()) {
                         foodRateNumber = 2;
-                    }else if(selectedFoodId == food3.getId()){
+                    } else if (selectedFoodId == food3.getId()) {
                         foodRateNumber = 3;
-                    }else if(selectedFoodId == food4.getId()){
+                    } else if (selectedFoodId == food4.getId()) {
                         foodRateNumber = 4;
-                    }else if(selectedFoodId == food5.getId()){
+                    } else if (selectedFoodId == food5.getId()) {
                         foodRateNumber = 5;
                     }
 
-                    if(selectedCleanId == clean1.getId()){
+                    if (selectedCleanId == clean1.getId()) {
                         cleanRateNumber = 1;
-                    }else if(selectedCleanId == clean2.getId()){
+                    } else if (selectedCleanId == clean2.getId()) {
                         cleanRateNumber = 2;
-                    }else if(selectedCleanId == clean3.getId()){
+                    } else if (selectedCleanId == clean3.getId()) {
                         cleanRateNumber = 3;
-                    }else if(selectedCleanId == clean4.getId()){
+                    } else if (selectedCleanId == clean4.getId()) {
                         cleanRateNumber = 4;
-                    }else if(selectedCleanId == clean5.getId()){
+                    } else if (selectedCleanId == clean5.getId()) {
                         cleanRateNumber = 5;
                     }
 
 
                     String id = ref.push().getKey();
-                    Review review = new Review(name.getText().toString(),restaurantID,comment.getText().toString(),foodRateNumber,cleanRateNumber);
+                    Review review = new Review(name.getText().toString(), restaurantID, comment.getText().toString(), foodRateNumber, cleanRateNumber);
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");
 
-                }else{
-                    Toast.makeText(context,"Please type restaurant review!",Toast.LENGTH_SHORT);
+                } else {
+                    Toast.makeText(context, "Please type restaurant review!", Toast.LENGTH_SHORT);
 
                 }
                 dialog.dismiss();
@@ -340,8 +352,9 @@ public class RestaurantDetails extends Fragment {
         }
 
     }
+
     private void getLastLocation() {
-        if(ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions();
             return;
         }
@@ -350,7 +363,7 @@ public class RestaurantDetails extends Fragment {
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<android.location.Location>() {
                     @Override
                     public void onSuccess(android.location.Location location) {
-                        if(location != null){
+                        if (location != null) {
                             currentLatitude = location.getLatitude();
                             currentLongitude = location.getLongitude();
 
@@ -365,7 +378,7 @@ public class RestaurantDetails extends Fragment {
     }
 
     private void requestPermissions() {
-        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
     }
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
