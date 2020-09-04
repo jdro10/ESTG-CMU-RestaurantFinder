@@ -30,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -46,11 +47,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.activities.MapActivity;
 import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
+import ipp.estg.restaurantfinder.db.HistoricDB;
+import ipp.estg.restaurantfinder.db.HistoricRoom;
+import ipp.estg.restaurantfinder.db.RestaurantDB;
+import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
@@ -73,6 +80,7 @@ public class RestaurantDetails extends Fragment {
     private int cleanRateNumber, foodRateNumber = 0;
     private RadioGroup foodRate;
     private RadioGroup cleanRate;
+    private RadioGroup mealChoosed;
     private List<Review> reviewList;
     private String restaurantID;
     private RecyclerView recyclerView;
@@ -88,7 +96,11 @@ public class RestaurantDetails extends Fragment {
     private double meanFood, meanClean;
     private TextView cleanRateText, foodRateText, avgRateText;
     private RatingBar ratingbar;
+    private String food;
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private HistoricDB db;
     private String menuUrl;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,9 +113,6 @@ public class RestaurantDetails extends Fragment {
         restaurantID = getActivity().getIntent().getExtras().getString("res_id");
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         getLastLocation();
-        Calendar rightNow = Calendar.getInstance();
-
-        Log.d("teste", rightNow.get(Calendar.HOUR_OF_DAY) + "" + rightNow.get(Calendar.MINUTE));
     }
 
     @Override
@@ -256,6 +265,7 @@ public class RestaurantDetails extends Fragment {
         Button submit = view.findViewById(R.id.submit_button);
         foodRate = view.findViewById(R.id.food_group);
         cleanRate = view.findViewById(R.id.clean_group);
+        mealChoosed = view.findViewById(R.id.meal_group);
         RadioButton food1 = view.findViewById(R.id.food1);
         RadioButton food2 = view.findViewById(R.id.food2);
         RadioButton food3 = view.findViewById(R.id.food3);
@@ -266,11 +276,29 @@ public class RestaurantDetails extends Fragment {
         RadioButton clean3 = view.findViewById(R.id.clean3);
         RadioButton clean4 = view.findViewById(R.id.clean4);
         RadioButton clean5 = view.findViewById(R.id.clean5);
+        RadioButton meal1 = view.findViewById(R.id.meal1);
+        RadioButton meal2 = view.findViewById(R.id.meal2);
+        RadioButton meal3 = view.findViewById(R.id.meal3);
+        RadioButton meal4 = view.findViewById(R.id.meal4);
+        RadioButton meal5 = view.findViewById(R.id.meal5);
+        EditText numberKM = view.findViewById(R.id.number_kms);
+        EditText foodEated = view.findViewById(R.id.food_eated);
 
         alert.setView(view);
 
         AlertDialog dialog = alert.create();
         dialog.show();
+
+        mealChoosed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                if(id == meal5.getId()){
+                    foodEated.setVisibility(View.VISIBLE);
+                }else{
+                    foodEated.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -280,6 +308,7 @@ public class RestaurantDetails extends Fragment {
 
                     int selectedFoodId = foodRate.getCheckedRadioButtonId();
                     int selectedCleanId = cleanRate.getCheckedRadioButtonId();
+                    int selectedMealChoosed = mealChoosed.getCheckedRadioButtonId();
 
                     if (selectedFoodId == food1.getId()) {
                         foodRateNumber = 1;
@@ -305,6 +334,30 @@ public class RestaurantDetails extends Fragment {
                         cleanRateNumber = 5;
                     }
 
+                    if(selectedMealChoosed == meal1.getId()){
+                        food = "HotDog";
+                    }else if(selectedMealChoosed == meal2.getId()){
+                        food = "Lasagna";
+                    }else if(selectedMealChoosed == meal3.getId()){
+                        food = "Pizza";
+                    }else if(selectedMealChoosed == meal4.getId()){
+                        food = "Hamburger";
+                    }else if(selectedMealChoosed == meal5.getId()){
+                        food = foodEated.getText().toString();
+                    }
+
+                    if(food.equals("") || food == null){
+                        food = "Not specified";
+                    }
+
+                    Calendar rightNow = Calendar.getInstance();
+
+                    String date = rightNow.get(Calendar.DAY_OF_MONTH) + "/" + rightNow.get(Calendar.MONTH) + "/" + rightNow.get(Calendar.YEAR) + "    "  + rightNow.get(Calendar.HOUR_OF_DAY) + ":" + rightNow.get(Calendar.MINUTE);
+
+                    HistoricRoom historic  = new HistoricRoom(restaurantID,restaurantName,date,food,22.4);
+                    /*Double.parseDouble(numberKM.getText().toString())*/
+
+                    makeHistoric(historic);
 
                     String id = ref.push().getKey();
                     Review review = new Review(name.getText().toString(), restaurantID, comment.getText().toString(), foodRateNumber, cleanRateNumber);
@@ -399,5 +452,14 @@ public class RestaurantDetails extends Fragment {
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
+    }
+
+    private void makeHistoric(HistoricRoom historicRoom) {
+
+        Log.d("ENTREI AQUI MANUUUU","yah manuh");
+        db = Room.databaseBuilder(context, HistoricDB.class, "HistoricDB").build();
+        databaseWriterExecutor.execute(() -> {
+            db.daoAccess().insertHistoric(historicRoom);
+        });
     }
 }

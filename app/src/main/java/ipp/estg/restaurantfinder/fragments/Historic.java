@@ -2,6 +2,7 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class Historic extends Fragment {
 
         this.context = getActivity();
         historicRoomList = new ArrayList<>();
+        this.getHistoric();
     }
 
     @Nullable
@@ -54,7 +56,7 @@ public class Historic extends Fragment {
         this.recyclerView = contentView.findViewById(R.id.reviewsRecyclerView);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        this.getReviews();
+        Log.d("ENTREI AQUI MANUUUU",historicRoomList.size()+"");
 
         this.historicAdapter = new HistoricAdapter(this.context, this.historicRoomList);
 
@@ -65,7 +67,7 @@ public class Historic extends Fragment {
         return contentView;
     }
 
-    private void getReviews() {
+    private void getHistoric() {
 
         db = Room.databaseBuilder(context, HistoricDB.class, "HistoricDB").build();
         databaseReadExecutor.execute(() -> {

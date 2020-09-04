@@ -19,9 +19,6 @@ public class HistoricRoom {
     private String type;
     private double distance;
 
-    private HistoricRoom(){
-
-    }
 
     public HistoricRoom(String restaurantId, String restaurantName, String date, String type, double distance) {
         this.restaurantId = restaurantId;
