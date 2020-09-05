@@ -49,4 +49,6 @@
     <string name="hamburguer">Hamburguer</string>
     <string name="other">Other</string>
     <string name="restaurants_near_you">Restaurants near you</string>
+    <string name="settings">Settings</string>
+    <string name="notications">Notications</string>
 </resources>

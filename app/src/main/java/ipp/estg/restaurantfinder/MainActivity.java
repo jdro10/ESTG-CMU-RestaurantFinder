@@ -6,6 +6,7 @@ import androidx.room.Room;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
 import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
+import ipp.estg.restaurantfinder.activities.PreferencesActivity;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
 import ipp.estg.restaurantfinder.activities.WebViewActivity;
@@ -34,15 +36,19 @@ import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.services.LocationService;
 
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_NOTIFICATION;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
-    public static final String CHANNEL_ID = "LocationService";
+
     private Button send;
     private TextView comentario,nomePessoa;
     DatabaseReference ref;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
+    private SharedPreferences sharedPreferences;
 
     private void makeHistoric() {
 
@@ -72,15 +78,13 @@ public class MainActivity extends AppCompatActivity {
         comentario = findViewById(R.id.comentario);
         nomePessoa = findViewById(R.id.nome_pessoa);
 
-        createNotificationChannel();
-
-
         Button button = findViewById(R.id.loginActivityButton);
         Button button1 = findViewById(R.id.restaurantButton);
         Button button2 = findViewById(R.id.favoritesActivity);
         Button button3 = findViewById(R.id.restaurant_details);
         Button button4 = findViewById(R.id.startService);
         Button button5 = findViewById(R.id.openWebView);
+        Button button6 = findViewById(R.id.preferences_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +133,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+                startActivity(intent);
+            }
+        });
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,18 +167,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startService(View v) {
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        startService(serviceIntent);
-    }
+        this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String strNotification = this.sharedPreferences.getString(KEY_NOTIFICATION, "");
 
-    private void createNotificationChannel() {
-        NotificationChannel locationServiceChannel = new NotificationChannel(
-                CHANNEL_ID,
-                "Location Service Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
-        );
-
-        NotificationManager manager = getSystemService(NotificationManager.class);
-        manager.createNotificationChannel(locationServiceChannel);
+        if(strNotification.equals("true")){
+            Intent serviceIntent = new Intent(this, LocationService.class);
+            startService(serviceIntent);
+        } else {
+            Toast.makeText(getApplicationContext(), "Please enable notifications to use this service", Toast.LENGTH_LONG).show();
+        }
     }
 }
