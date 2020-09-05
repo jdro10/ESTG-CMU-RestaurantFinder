@@ -2,10 +2,13 @@ package ipp.estg.restaurantfinder.services;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,7 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,16 +47,14 @@ import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
-import ipp.estg.restaurantfinder.models.Restaurant;
 import ipp.estg.restaurantfinder.models.Restaurants;
 import ipp.estg.restaurantfinder.models.SearchResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-import static ipp.estg.restaurantfinder.MainActivity.CHANNEL_ID;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_NOTIFICATION;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
 
 public class LocationService extends Service {
 
@@ -65,11 +67,15 @@ public class LocationService extends Service {
     private RestaurantDB db;
     private List<RestaurantRoom> favoriteRestaurantsList;
     private Bitmap restaurantBitmap;
+    public static final String CHANNEL_ID = "LocationService";
+
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+
+        this.createNotificationChannel();
         this.favoriteRestaurantsList = new ArrayList<>();
         this.context = getApplicationContext();
         this.locationRequest = new LocationRequest();
@@ -204,5 +210,16 @@ public class LocationService extends Service {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
             notificationManagerCompat.notify(2, builder.build());
         }
+    }
+
+    private void createNotificationChannel() {
+        NotificationChannel locationServiceChannel = new NotificationChannel(
+                CHANNEL_ID,
+                "Location Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(locationServiceChannel);
     }
 }

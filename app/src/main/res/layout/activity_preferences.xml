@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -17,34 +17,34 @@
             android:background="?attr/colorPrimary" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
-        android:id="@+id/loadingPanel"
+    <TextView
+        android:id="@+id/prefereces_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" >
+        android:text="@string/settings"
+        android:textSize="25sp"
+        android:layout_marginStart="10dp"
+        android:layout_height="wrap_content" />
 
-        <ProgressBar
-            android:id="@+id/loading_progress_xml"
-            style="?android:attr/progress"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/notification_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:text="@string/notications"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
 
-    </RelativeLayout>
+        <Switch
+            android:id="@+id/toggle_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="250dp"
+            android:layout_marginTop="10dp"/>
 
-    <TextView
-        android:id="@+id/near_you_restaurants_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="25sp"
-        android:text="@string/restaurants_near_you" />
-
-    <fragment
-        android:name="ipp.estg.restaurantfinder.fragments.RestaurantsList"
-        android:id="@+id/nearbyRestaurantsFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </LinearLayout>
