@@ -207,7 +207,7 @@ public class RestaurantDetails extends Fragment {
                     restaurantLongitude = Double.parseDouble(location.getLongitude());
                     double distanceBetweenUserAndRestaurant = distance(restaurantLatitude, restaurantLongitude, currentLatitude, currentLongitude);
                     Log.d("teste", distanceBetweenUserAndRestaurant + "");
-                    if (distanceBetweenUserAndRestaurant > 20) {
+                    if (distanceBetweenUserAndRestaurant > 100) {
                         rateButton.setEnabled(false);
                     }
 

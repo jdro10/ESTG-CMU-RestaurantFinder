@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -20,6 +21,8 @@
 
     </RelativeLayout>
 
+
+
     <LinearLayout
         android:id="@+id/restaurant_details_linear_layout"
         android:layout_width="match_parent"
@@ -32,13 +35,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/restaurant_selected"
         android:text="@string/restaurant_selected"
-        android:gravity="center_horizontal" />
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
         android:gravity="center">
 
         <RatingBar
@@ -72,8 +74,6 @@
             android:text="@string/restaurant_selected"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"/>
-
-
 
     <TextView
         android:layout_width="wrap_content"

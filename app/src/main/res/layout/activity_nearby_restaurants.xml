@@ -33,6 +33,14 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/near_you_restaurants_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="25sp"
+        android:text="@string/restaurants_near_you" />
+
     <fragment
         android:name="ipp.estg.restaurantfinder.fragments.RestaurantsList"
         android:id="@+id/nearbyRestaurantsFragment"

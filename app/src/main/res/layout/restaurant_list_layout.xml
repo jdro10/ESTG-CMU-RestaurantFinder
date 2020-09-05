@@ -48,6 +48,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="CALL"
             android:id="@+id/call_button"
             />
@@ -56,7 +57,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/isFavoriteOrNot"
-            android:layout_marginLeft="27dp"
+            android:layout_marginStart="35dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/favorite_border"/>
     </LinearLayout>

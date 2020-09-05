@@ -48,4 +48,5 @@
     <string name="pizza">Pizza</string>
     <string name="hamburguer">Hamburguer</string>
     <string name="other">Other</string>
+    <string name="restaurants_near_you">Restaurants near you</string>
 </resources>
