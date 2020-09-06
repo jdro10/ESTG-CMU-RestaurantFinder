@@ -81,7 +81,7 @@ public class HistoricRoom {
     }
 
     @Dao
-    public interface HistoricRoomDao{
+    public interface HistoricRoomDao {
         @Query("SELECT * FROM HistoricRoom")
         public HistoricRoom[] getAll();
 

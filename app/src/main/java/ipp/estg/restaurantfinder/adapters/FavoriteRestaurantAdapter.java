@@ -31,11 +31,10 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
     private Context context;
     private List<RestaurantRoom> restaurants;
-    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private RestaurantDB db;
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
 
     private void deleteRestaurants(String id) {
-
         db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().deleteRestaurant(id);
@@ -52,7 +51,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
     public FavoriteRestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
         return new FavoriteRestaurantViewHolder(restaurantView);
@@ -60,7 +58,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteRestaurantViewHolder holder, int position) {
-
         RestaurantRoom restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
@@ -68,7 +65,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         TextView addressTextView = holder.address;
         ImageView photo = holder.photo;
         ImageView favorite = holder.favorite;
-
 
         nameTextView.setText(restaurant.getName());
         addressTextView.setText(restaurant.getAddress());
@@ -106,7 +102,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
                 context.startActivity(phoneIntent);
             }
         });
-
     }
 
     @Override
@@ -132,7 +127,6 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
     }
 
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
-
         private ImageView imageView;
 
         public GetRestaurantImage(ImageView imageView) {

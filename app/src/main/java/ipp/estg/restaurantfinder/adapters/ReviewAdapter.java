@@ -1,7 +1,6 @@
 package ipp.estg.restaurantfinder.adapters;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -29,10 +30,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @NonNull
     @Override
     public ReviewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View reviewView = inflater.inflate(R.layout.comment_layout, parent, false);
 
         return new ReviewAdapter.ReviewViewHolder(reviewView);
@@ -40,7 +39,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-
         final Review review = this.reviews.get(position);
 
         TextView foodRate = holder.foodRate;
@@ -54,7 +52,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         comment.setText(review.getComment());
         personName.setText(review.getUserId());
         photo.setImageResource(R.drawable.someone);
-
     }
 
     @Override
@@ -62,9 +59,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return this.reviews.size();
     }
 
-    public class ReviewViewHolder extends RecyclerView.ViewHolder{
+    public class ReviewViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView foodRate, personName, cleanRate, comment;
+        public TextView comment;
+        public TextView foodRate;
+        public TextView cleanRate;
+        public TextView personName;
         public ImageView photo;
 
         public ReviewViewHolder(@NonNull View itemView) {

@@ -7,5 +7,4 @@ import androidx.room.RoomDatabase;
 public abstract class RestaurantDB extends RoomDatabase {
 
     public abstract RestaurantRoom.RestaurantRoomDao daoAccess();
-
 }

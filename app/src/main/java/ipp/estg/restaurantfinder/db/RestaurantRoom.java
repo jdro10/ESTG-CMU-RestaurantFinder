@@ -93,7 +93,5 @@ public class RestaurantRoom {
 
         @Query("SELECT* FROM RestaurantRoom WHERE address LIKE :address ")
         public RestaurantRoom getRestaurantFromAddress(String address);
-        //TEMOS Q PASSAR A STRING COM %ADDRESS%
-
     }
 }
