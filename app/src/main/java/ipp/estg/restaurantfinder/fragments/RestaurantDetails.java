@@ -374,6 +374,8 @@ public class RestaurantDetails extends Fragment {
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");
+                    reviewList.add(review);
+                    reviewAdapter.notifyDataSetChanged();
 
                 } else {
                     Toast.makeText(context, "Please type restaurant review!", Toast.LENGTH_SHORT);
