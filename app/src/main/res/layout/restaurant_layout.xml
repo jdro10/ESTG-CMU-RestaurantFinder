@@ -30,12 +30,19 @@
         android:orientation="vertical"
         android:visibility="invisible">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/restaurant_selected"
-        android:text="@string/restaurant_selected"
-        android:gravity="center" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/restaurant_selected"
+            android:text="@string/restaurant_selected"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/distance_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0km"
+            android:gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"

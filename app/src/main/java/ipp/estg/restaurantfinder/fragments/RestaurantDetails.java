@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -92,6 +93,7 @@ public class RestaurantDetails extends Fragment {
     private double totalRateFood, totalRateClean;
     private double meanFood, meanClean;
     private TextView cleanRateText, foodRateText, avgRateText;
+    private TextView distanceTextView;
     private RatingBar ratingbar;
     private String food;
     private HistoricDB db;
@@ -161,6 +163,7 @@ public class RestaurantDetails extends Fragment {
         this.ratingbar = contentView.findViewById(R.id.ratingBar);
         this.cleanRateText = contentView.findViewById(R.id.clean_rate);
         this.foodRateText = contentView.findViewById(R.id.food_rate);
+        this.distanceTextView = contentView.findViewById(R.id.distance_text_view);
         this.avgRateText = contentView.findViewById(R.id.avg_rate);
         this.menuButton = contentView.findViewById(R.id.check_menu_restaurant);
         this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
@@ -196,6 +199,11 @@ public class RestaurantDetails extends Fragment {
                     if (distanceBetweenUserAndRestaurant > 100) {
                         rateButton.setEnabled(false);
                     }
+
+                    DecimalFormat df = new DecimalFormat("#");
+                    distanceBetweenUserAndRestaurant = Double.valueOf(df.format(distanceBetweenUserAndRestaurant));
+
+                    distanceTextView.setText("Distância: " + distanceBetweenUserAndRestaurant + "km");
 
                     double mean = (meanClean + meanFood) / 2;
 

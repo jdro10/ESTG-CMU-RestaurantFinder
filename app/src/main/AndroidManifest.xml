@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PreferencesActivity"></activity>
+        <activity android:name=".activities.PreferencesActivity" />
         <activity android:name=".activities.HistoricActivity" />
         <activity android:name=".activities.WebViewActivity" />
         <activity android:name=".activities.SettingsActivity" />
@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
 
         <service android:name=".services.LocationService" />
 
