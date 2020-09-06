@@ -138,7 +138,7 @@ public class LocationService extends Service {
 
         startForeground(1, notification);
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void startLocationUpdates() {

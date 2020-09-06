@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
@@ -17,6 +19,10 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.models.Location;
+import ipp.estg.restaurantfinder.services.LocationService;
+
+import static ipp.estg.restaurantfinder.services.LocationService.CHANNEL_ID;
 
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -76,11 +82,15 @@ public class PreferencesActivity extends AppCompatActivity {
                 if (isChecked) {
                     editor.putString(KEY_NOTIFICATION, "true");
                     editor.putString(KEY_SWITCH, "on");
+
+                    startService(new Intent(PreferencesActivity.this, LocationService.class));
                 } else {
                     editor.putString(KEY_NOTIFICATION, "false");
                     editor.putString(KEY_SWITCH, "off");
+
+                    stopService(new Intent(PreferencesActivity.this, LocationService.class));
                 }
-                editor.commit();
+                editor.apply();
             }
         });
 
