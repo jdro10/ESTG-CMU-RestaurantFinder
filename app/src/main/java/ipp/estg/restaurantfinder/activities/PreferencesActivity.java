@@ -11,7 +11,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import ipp.estg.restaurantfinder.R;
@@ -24,6 +27,9 @@ public class PreferencesActivity extends AppCompatActivity {
     public static final String SHARED_PREF_NAME = "app_pref";
     public static final String KEY_NOTIFICATION = "notification";
     private static final String KEY_SWITCH = "switch";
+    public static final String KEY_RADIUS = "radius";
+    private RadioButton size10,size30,size50,size100;
+    private RadioGroup radiusSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,11 @@ public class PreferencesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_preferences);
 
         this.notificationSwitch = findViewById(R.id.toggle_notification);
+        this.radiusSize = findViewById(R.id.radius_group);
+        this.size10 = findViewById(R.id.size10);
+        this.size30 = findViewById(R.id.size30);
+        this.size50 = findViewById(R.id.size50);
+        this.size100 = findViewById(R.id.size100);
         this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
 
@@ -44,6 +55,18 @@ public class PreferencesActivity extends AppCompatActivity {
             this.notificationSwitch.setChecked(false);
         }
 
+        if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("10000")){
+            this.size10.setChecked(true);
+        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("30000")){
+            this.size30.setChecked(true);
+        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("50000")){
+            this.size50.setChecked(true);
+        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("100000")){
+            this.size100.setChecked(true);
+        }else{
+            this.size30.setChecked(true);
+        }
+
         this.notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -53,6 +76,22 @@ public class PreferencesActivity extends AppCompatActivity {
                 } else {
                     editor.putString(KEY_NOTIFICATION, "false");
                     editor.putString(KEY_SWITCH, "off");
+                }
+                editor.commit();
+            }
+        });
+
+        this.radiusSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                if(id == size10.getId()){
+                    editor.putString(KEY_RADIUS,"10000");
+                }else if(id == size30.getId()){
+                    editor.putString(KEY_RADIUS,"30000");
+                }else if(id == size50.getId()){
+                    editor.putString(KEY_RADIUS,"50000");
+                }else if(id == size100.getId()){
+                    editor.putString(KEY_RADIUS,"100000");
                 }
                 editor.commit();
             }

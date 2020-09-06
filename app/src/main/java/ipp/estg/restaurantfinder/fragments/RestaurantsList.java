@@ -3,6 +3,7 @@ package ipp.estg.restaurantfinder.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -48,6 +49,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class RestaurantsList extends Fragment {
 
     private Context context;
@@ -61,6 +64,10 @@ public class RestaurantsList extends Fragment {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private String latitude;
     private String longitude;
+    private SharedPreferences sharedPreferences;
+    public static final String SHARED_PREF_NAME = "app_pref";
+    public static final String KEY_RADIUS = "radius";
+    private String radius;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,10 +77,12 @@ public class RestaurantsList extends Fragment {
         this.favoriteRestaurantsList = new ArrayList<>();
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         setHasOptionsMenu(true);
+        this.sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        this.radius = this.sharedPreferences.getString(KEY_RADIUS,"");
 
         this.getLastLocation();
     }
-    
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -135,7 +144,7 @@ public class RestaurantsList extends Fragment {
                     latitude = String.valueOf(location.getLatitude());
                     longitude = String.valueOf(location.getLongitude());
 
-                    getRestaurantsFromAPI(latitude, longitude, 50000);
+                    getRestaurantsFromAPI(latitude, longitude, Integer.parseInt(radius));
                 }
             }
         }).addOnFailureListener(getActivity(), new OnFailureListener() {
