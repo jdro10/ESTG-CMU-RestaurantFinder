@@ -18,11 +18,11 @@
         android:layout_height="wrap_content"
         android:text="Abrir restaurant activity" />
 
-    <Button
+<!--    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Abrir favoritos"
-        android:id="@+id/favoritesActivity"/>
+        android:id="@+id/favoritesActivity"/>-->
 
     <Button
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
         android:text="Abrir detalhes restaurante"
         android:id="@+id/restaurant_details"/>
 
-    <EditText
+   <!-- <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nome_pessoa"
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/comentario"
-        android:hint="comentario"/>
+        android:hint="comentario"/>-->
 
     <Button
         android:layout_width="wrap_content"
@@ -54,17 +54,33 @@
         android:layout_height="wrap_content"
         android:text="start service" />
 
-    <Button
+    <!--<Button
         android:id="@+id/openWebView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open web view" />
+        android:text="Open web view" />-->
 
     <Button
         android:id="@+id/preferences_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="open preferences" />
+
+    <Button
+        android:id="@+id/picture_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="take a pick" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/picture_taken"
+        android:layout_gravity="center" />
+
+
+
+
 
 
 </LinearLayout>
