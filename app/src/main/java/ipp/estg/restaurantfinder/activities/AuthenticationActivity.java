@@ -5,7 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import ipp.estg.restaurantfinder.R;
 
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_RADIUS;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_USER_EMAIL;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
+
 public class AuthenticationActivity extends AppCompatActivity {
 
     private Button loginButton;
@@ -29,6 +35,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     private TextInputEditText loginEmail;
     private TextInputEditText loginPassword;
     private FirebaseAuth firebaseAuth;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,28 +49,35 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_layout);
 
-        loginEmail = findViewById(R.id.loginEmail);
-        loginPassword = findViewById(R.id.loginPassword);
-        loginButton = findViewById(R.id.loginButton);
-        signupButton = findViewById(R.id.signupButton);
-        forgotPassword = findViewById(R.id.forgotPasswordTextView);
+        this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        this.editor = this.sharedPreferences.edit();
+        this.loginEmail = findViewById(R.id.loginEmail);
+        this.loginPassword = findViewById(R.id.loginPassword);
+        this.loginButton = findViewById(R.id.loginButton);
+        this.signupButton = findViewById(R.id.signupButton);
+        this.forgotPassword = findViewById(R.id.forgotPasswordTextView);
         this.firebaseAuth = FirebaseAuth.getInstance();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn(loginEmail.getText().toString(), loginPassword.getText().toString());
-            }
-        });
+        if (this.sharedPreferences.getString(KEY_USER_EMAIL, null) != null) {
+            Intent nearbyRestaurantsIntent = new Intent(getApplicationContext(), NearbyRestaurants.class);
+            startActivity(nearbyRestaurantsIntent);
+        } else {
+            this.loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    signIn(loginEmail.getText().toString(), loginPassword.getText().toString());
+                }
+            });
+        }
 
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
+        this.forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 forgotPasswordDialog();
             }
         });
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
+        this.signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent signupIntent = new Intent(getApplicationContext(), SignUpActivity.class);
@@ -72,7 +87,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void forgotPasswordDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle("Request new password");
 
         LayoutInflater inflater = getLayoutInflater();
@@ -95,15 +110,22 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
+        if (!this.validateForm()) {
+            return;
+        }
+
         this.firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
+                            editor.putString(KEY_USER_EMAIL, user.getEmail());
+                            editor.commit();
                             Intent nearbyRestaurantsIntent = new Intent(getApplicationContext(), NearbyRestaurants.class);
                             startActivity(nearbyRestaurantsIntent);
                         } else {
+                            editor.putString(KEY_USER_EMAIL, null);
                             loginDialog("Login error!", getString(R.string.login_error), getString(R.string.ok_button));
                         }
                     }
@@ -111,7 +133,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void loginDialog(String titleMsg, String textMsg, String textButton) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle(titleMsg);
 
         LayoutInflater inflater = getLayoutInflater();
@@ -137,16 +159,37 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void resetPassword(String email) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         this.firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "To reset your password, check your email.", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+    }
+
+    private boolean validateForm() {
+        String email = this.loginEmail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String password = this.loginPassword.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Invalid password, please try again", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 }

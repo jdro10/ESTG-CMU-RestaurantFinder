@@ -2,7 +2,6 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,29 +21,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
-import ipp.estg.restaurantfinder.adapters.FavoriteRestaurantAdapter;
 import ipp.estg.restaurantfinder.adapters.HistoricAdapter;
 import ipp.estg.restaurantfinder.db.HistoricDB;
 import ipp.estg.restaurantfinder.db.HistoricRoom;
-import ipp.estg.restaurantfinder.db.RestaurantDB;
-
 
 public class Historic extends Fragment {
 
-
     private Context context;
-    private HistoricAdapter historicAdapter;
+    private HistoricDB db;
     private RecyclerView recyclerView;
+    private HistoricAdapter historicAdapter;
     private List<HistoricRoom> historicRoomList;
     private final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
-    private HistoricDB db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.context = getActivity();
-        historicRoomList = new ArrayList<>();
+        this.historicRoomList = new ArrayList<>();
         this.getHistoric();
     }
 
@@ -64,7 +59,6 @@ public class Historic extends Fragment {
     }
 
     private void getHistoric() {
-
         db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
         databaseReadExecutor.execute(() -> {
             historicRoomList.addAll(Arrays.asList(db.daoAccess().getAll()));

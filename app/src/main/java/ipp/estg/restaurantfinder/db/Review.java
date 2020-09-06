@@ -8,7 +8,7 @@ public class Review {
     private int foodRate;
     private int cleanRate;
 
-    public Review (){
+    public Review() {
 
     }
 

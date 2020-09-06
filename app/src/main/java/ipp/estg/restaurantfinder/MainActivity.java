@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
 
     private Button send;
-    private TextView comentario,nomePessoa;
+    private TextView comentario, nomePessoa;
     DatabaseReference ref;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeHistoric() {
 
-        Log.d("ENTREI AQUI MANUUUU","yah manuh");
-        HistoricRoom historic  = new HistoricRoom("restaurante"," mm","date","food",22.4);
+        Log.d("ENTREI AQUI MANUUUU", "yah manuh");
+        HistoricRoom historic = new HistoricRoom("restaurante", " mm", "date", "food", 22.4);
         db = Room.databaseBuilder(getApplicationContext(), HistoricDB.class, "HistoricsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().insertHistoric(historic);
@@ -150,18 +150,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void addReview(){
+    public void addReview() {
 
-        if(!TextUtils.isEmpty(nomePessoa.getText().toString()) && !TextUtils.isEmpty(comentario.getText().toString())){
+        if (!TextUtils.isEmpty(nomePessoa.getText().toString()) && !TextUtils.isEmpty(comentario.getText().toString())) {
 
             String id = ref.push().getKey();
-            Review review = new Review(nomePessoa.getText().toString(),"algum restaurante",comentario.getText().toString(),5,5);
+            Review review = new Review(nomePessoa.getText().toString(), "algum restaurante", comentario.getText().toString(), 5, 5);
             ref.child(id).setValue(review);
             nomePessoa.setText("");
             comentario.setText("");
 
-        }else{
-            Toast.makeText(MainActivity.this,"Please type restaurant review!",Toast.LENGTH_SHORT);
+        } else {
+            Toast.makeText(MainActivity.this, "Please type restaurant review!", Toast.LENGTH_SHORT);
 
         }
     }
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         String strNotification = this.sharedPreferences.getString(KEY_NOTIFICATION, "");
 
-        if(strNotification.equals("true")){
+        if (strNotification.equals("true")) {
             Intent serviceIntent = new Intent(this, LocationService.class);
             startService(serviceIntent);
         } else {

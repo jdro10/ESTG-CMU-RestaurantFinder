@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,12 +25,12 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web_view);
 
         Intent urlIntent = getIntent();
-        this.urlIntent = urlIntent.getStringExtra("url");
 
+        this.urlIntent = urlIntent.getStringExtra("url");
         this.urlTextView = findViewById(R.id.web_view_url_text);
         this.closeImage = findViewById(R.id.close_img);
 
-        closeImage.setOnClickListener(new View.OnClickListener() {
+        this.closeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 WebViewActivity.super.onBackPressed();
@@ -42,7 +41,7 @@ public class WebViewActivity extends AppCompatActivity {
         this.web.getSettings().setJavaScriptEnabled(false);
 
         this.web.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url){
+            public void onPageFinished(WebView view, String url) {
                 urlTextView.setText(url);
             }
         });

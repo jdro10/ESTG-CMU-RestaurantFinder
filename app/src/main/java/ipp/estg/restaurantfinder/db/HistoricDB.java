@@ -7,5 +7,4 @@ import androidx.room.RoomDatabase;
 public abstract class HistoricDB extends RoomDatabase {
 
     public abstract HistoricRoom.HistoricRoomDao daoAccess();
-
 }
