@@ -59,4 +59,15 @@ public class Review {
     public void setCleanRate(int cleanRate) {
         this.cleanRate = cleanRate;
     }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "userId='" + userId + '\'' +
+                ", restaurantId='" + restaurantId + '\'' +
+                ", comment='" + comment + '\'' +
+                ", foodRate=" + foodRate +
+                ", cleanRate=" + cleanRate +
+                '}';
+    }
 }
