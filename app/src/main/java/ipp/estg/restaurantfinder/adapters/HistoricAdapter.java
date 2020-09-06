@@ -43,7 +43,7 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
         final HistoricRoom historic = this.historic.get(position);
 
         holder.restaurant.setText(historic.getRestaurantName());
-        holder.distance.setText(historic.getDate());
+        holder.distance.setText(historic.getDistance()+"");
         holder.date.setText(historic.getDate());
         holder.type_food.setText(historic.getType());
 

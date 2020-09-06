@@ -364,7 +364,7 @@ public class RestaurantDetails extends Fragment {
                     String date = rightNow.get(Calendar.DAY_OF_MONTH) + "/" + rightNow.get(Calendar.MONTH) + "/" + rightNow.get(Calendar.YEAR) + "    "  + rightNow.get(Calendar.HOUR_OF_DAY) + ":" + rightNow.get(Calendar.MINUTE);
 
                     HistoricRoom historic  = new HistoricRoom(restaurantID,restaurantName,date,food,Double.parseDouble(numberKM.getText().toString()));
-                    Log.d("QUERO VER",restaurantID + restaurantName + date + food + numberKM.getText().toString());
+                    Log.d("QUERO VER",historic.toString());
                     /*Double.parseDouble(numberKM.getText().toString())*/
 
                     makeHistoric(historic);
@@ -374,6 +374,8 @@ public class RestaurantDetails extends Fragment {
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");
+                    reviewList.add(review);
+                    reviewAdapter.notifyDataSetChanged();
 
                 } else {
                     Toast.makeText(context, "Please type restaurant review!", Toast.LENGTH_SHORT);

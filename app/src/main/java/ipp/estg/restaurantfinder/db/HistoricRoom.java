@@ -11,10 +11,10 @@ import androidx.room.Query;
 @Entity
 public class HistoricRoom {
 
-    @PrimaryKey
-    @NonNull
     private String restaurantId;
     private String restaurantName;
+    @PrimaryKey
+    @NonNull
     private String date;
     private String type;
     private double distance;
@@ -69,6 +69,16 @@ public class HistoricRoom {
         this.distance = distance;
     }
 
+    @Override
+    public String toString() {
+        return "HistoricRoom{" +
+                "restaurantId='" + restaurantId + '\'' +
+                ", restaurantName='" + restaurantName + '\'' +
+                ", date='" + date + '\'' +
+                ", type='" + type + '\'' +
+                ", distance=" + distance +
+                '}';
+    }
 
     @Dao
     public interface HistoricRoomDao{
