@@ -3,15 +3,18 @@ package ipp.estg.restaurantfinder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,17 +27,13 @@ import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.db.HistoricDB;
 import ipp.estg.restaurantfinder.db.HistoricRoom;
-import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.services.LocationService;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import ipp.estg.restaurantfinder.services.LocationService;
 
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_NOTIFICATION;
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
@@ -43,12 +42,18 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
 
+
+    private Button send,picture_btn,manda_foto;
+    private TextView comentario,nomePessoa;
     private Button send;
     private TextView comentario, nomePessoa;
     DatabaseReference ref;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
     private SharedPreferences sharedPreferences;
+    ImageView image ;
+    private static final int CAMERA_PIC_REQUEST = 1337;
+
 
     private void makeHistoric() {
 
@@ -60,30 +65,56 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_PIC_REQUEST) {
+            Bitmap image = (Bitmap) data.getExtras().get("data");
+            ImageView imageview = (ImageView) findViewById(R.id.picture_taken); //sets imageview as the bitmap
+            imageview.setImageBitmap(image);
+
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         makeHistoric();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+
+        picture_btn = findViewById(R.id.picture_btn);
+
+
+
+
+        picture_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+            }
+        });
+
+
 
         Log.d("antes", "antes");
-        ref = database.getReference("reviews");
+
 
 
         Log.d("depois", "depois");
 
         send = findViewById(R.id.send);
-        comentario = findViewById(R.id.comentario);
-        nomePessoa = findViewById(R.id.nome_pessoa);
+
 
         Button button = findViewById(R.id.loginActivityButton);
         Button button1 = findViewById(R.id.restaurantButton);
-        Button button2 = findViewById(R.id.favoritesActivity);
+
         Button button3 = findViewById(R.id.restaurant_details);
         Button button4 = findViewById(R.id.startService);
-        Button button5 = findViewById(R.id.openWebView);
+
         Button button6 = findViewById(R.id.preferences_button);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -102,13 +133,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
-                startActivity(intent);
-            }
-        });
 
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,13 +149,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        button5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         button6.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,4 +195,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please enable notifications to use this service", Toast.LENGTH_LONG).show();
         }
     }
+
+
+
+
 }
