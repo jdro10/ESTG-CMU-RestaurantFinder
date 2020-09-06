@@ -5,7 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import ipp.estg.restaurantfinder.R;
 
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_RADIUS;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_USER_EMAIL;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
+
 public class AuthenticationActivity extends AppCompatActivity {
 
     private Button loginButton;
@@ -29,6 +35,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     private TextInputEditText loginEmail;
     private TextInputEditText loginPassword;
     private FirebaseAuth firebaseAuth;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,8 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_layout);
 
+        this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        this.editor = this.sharedPreferences.edit();
         this.loginEmail = findViewById(R.id.loginEmail);
         this.loginPassword = findViewById(R.id.loginPassword);
         this.loginButton = findViewById(R.id.loginButton);
@@ -48,12 +58,20 @@ public class AuthenticationActivity extends AppCompatActivity {
         this.forgotPassword = findViewById(R.id.forgotPasswordTextView);
         this.firebaseAuth = FirebaseAuth.getInstance();
 
-        this.loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn(loginEmail.getText().toString(), loginPassword.getText().toString());
-            }
-        });
+        this.editor.putString(KEY_RADIUS, "10000");
+        this.editor.apply();
+
+        if(this.sharedPreferences.getString(KEY_USER_EMAIL, null) != null){
+            Intent nearbyRestaurantsIntent = new Intent(getApplicationContext(), NearbyRestaurants.class);
+            startActivity(nearbyRestaurantsIntent);
+        } else {
+            this.loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    signIn(loginEmail.getText().toString(), loginPassword.getText().toString());
+                }
+            });
+        }
 
         this.forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,15 +113,22 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
+        if (!this.validateForm()) {
+            return;
+        }
+
         this.firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
+                            editor.putString(KEY_USER_EMAIL, user.getEmail());
+                            editor.commit();
                             Intent nearbyRestaurantsIntent = new Intent(getApplicationContext(), NearbyRestaurants.class);
                             startActivity(nearbyRestaurantsIntent);
                         } else {
+                            editor.putString(KEY_USER_EMAIL, null);
                             loginDialog("Login error!", getString(R.string.login_error), getString(R.string.ok_button));
                         }
                     }
@@ -137,6 +162,11 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void resetPassword(String email) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         this.firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -148,5 +178,21 @@ public class AuthenticationActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private boolean validateForm() {
+        String email = this.loginEmail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String password = this.loginPassword.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Invalid password, please try again", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 }

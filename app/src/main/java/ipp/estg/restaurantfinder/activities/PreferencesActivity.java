@@ -30,6 +30,7 @@ public class PreferencesActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     public static final String SHARED_PREF_NAME = "app_pref";
     public static final String KEY_NOTIFICATION = "notification";
+    public static final String KEY_USER_EMAIL = "user_email";
     private static final String KEY_SWITCH = "switch";
     public static final String KEY_RADIUS = "radius";
 
@@ -122,13 +123,18 @@ public class PreferencesActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
+            Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_favourite) {
             Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
             startActivity(intent);
         } else if (id == R.id.action_historic) {
             Intent intent = new Intent(getApplicationContext(), HistoricActivity.class);
+            startActivity(intent);
+        } else if(id == R.id.action_signout) {
+            this.editor.putString(KEY_USER_EMAIL, null);
+            this.editor.commit();
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }
 

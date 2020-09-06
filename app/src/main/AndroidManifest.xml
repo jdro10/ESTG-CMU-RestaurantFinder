@@ -23,14 +23,14 @@
         <activity android:name=".activities.FavoritesRestaurants" />
         <activity android:name=".activities.NearbyRestaurants" />
         <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.AuthenticationActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.AuthenticationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"></activity>
 
         <service android:name=".services.LocationService" />
 
