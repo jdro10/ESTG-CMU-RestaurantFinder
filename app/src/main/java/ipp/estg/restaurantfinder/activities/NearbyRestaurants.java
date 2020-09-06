@@ -9,9 +9,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.services.LocationService;
 
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_NOTIFICATION;
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_USER_EMAIL;
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
 
@@ -31,6 +35,8 @@ public class NearbyRestaurants extends AppCompatActivity {
 
         this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
+
+        this.startService();
     }
 
     @Override
@@ -68,5 +74,17 @@ public class NearbyRestaurants extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startService() {
+        this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String strNotification = this.sharedPreferences.getString(KEY_NOTIFICATION, "");
+
+        if (strNotification.equals("true")) {
+            Intent serviceIntent = new Intent(this, LocationService.class);
+            startService(serviceIntent);
+        } else {
+            Toast.makeText(getApplicationContext(), "Unable to notify you about your near favorite restaurants", Toast.LENGTH_LONG).show();
+        }
     }
 }
