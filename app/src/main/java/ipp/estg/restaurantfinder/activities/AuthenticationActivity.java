@@ -58,9 +58,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         this.forgotPassword = findViewById(R.id.forgotPasswordTextView);
         this.firebaseAuth = FirebaseAuth.getInstance();
 
-        this.editor.putString(KEY_RADIUS, "10000");
-        this.editor.apply();
-
         if (this.sharedPreferences.getString(KEY_USER_EMAIL, null) != null) {
             Intent nearbyRestaurantsIntent = new Intent(getApplicationContext(), NearbyRestaurants.class);
             startActivity(nearbyRestaurantsIntent);

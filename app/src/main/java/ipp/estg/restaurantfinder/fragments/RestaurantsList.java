@@ -48,6 +48,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
+import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_RADIUS;
 
 public class RestaurantsList extends Fragment {
 
@@ -66,6 +67,7 @@ public class RestaurantsList extends Fragment {
     public static final String SHARED_PREF_NAME = "app_pref";
     public static final String KEY_RADIUS = "radius";
     private String radius;
+    private SharedPreferences.Editor editor;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +78,13 @@ public class RestaurantsList extends Fragment {
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         setHasOptionsMenu(true);
         this.sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        this.editor = sharedPreferences.edit();
+
+        if(this.sharedPreferences.getString(KEY_RADIUS, null) == null){
+            this.editor.putString(KEY_RADIUS, "10000");
+            this.editor.apply();
+        }
+
         this.radius = this.sharedPreferences.getString(KEY_RADIUS, "");
 
         this.getLastLocation();
