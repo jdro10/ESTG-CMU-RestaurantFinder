@@ -1,7 +1,6 @@
 package ipp.estg.restaurantfinder.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +24,11 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
         this.historic = historic;
     }
 
-
     @NonNull
     @Override
     public HistoricViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View historicView = inflater.inflate(R.layout.one_historic,parent,false);
 
         return new HistoricAdapter.HistoricViewHolder(historicView);
@@ -39,14 +36,12 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
 
     @Override
     public void onBindViewHolder(@NonNull HistoricViewHolder holder, int position) {
-
         final HistoricRoom historic = this.historic.get(position);
 
         holder.restaurant.setText(historic.getRestaurantName());
-        holder.distance.setText(historic.getDistance()+"");
+        holder.distance.setText(String.valueOf(historic.getDistance()));
         holder.date.setText(historic.getDate());
         holder.type_food.setText(historic.getType());
-
     }
 
     @Override
@@ -54,10 +49,12 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
         return historic.size();
     }
 
-
     public class HistoricViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView restaurant, distance, date , type_food;
+        public TextView restaurant;
+        public TextView distance;
+        public TextView date;
+        public TextView type_food;
 
         public HistoricViewHolder(@NonNull View itemView){
             super(itemView);
@@ -68,5 +65,4 @@ public class HistoricAdapter extends RecyclerView.Adapter<HistoricAdapter.Histor
             this.type_food = itemView.findViewById(R.id.type_food);
         }
     }
-
 }

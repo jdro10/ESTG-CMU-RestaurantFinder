@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -22,19 +21,26 @@ import ipp.estg.restaurantfinder.R;
 public class PreferencesActivity extends AppCompatActivity {
 
     private Switch notificationSwitch;
+    private RadioButton size10;
+    private RadioButton size30;
+    private RadioButton size50;
+    private RadioButton size100;
+    private RadioGroup radiusSize;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     public static final String SHARED_PREF_NAME = "app_pref";
     public static final String KEY_NOTIFICATION = "notification";
     private static final String KEY_SWITCH = "switch";
     public static final String KEY_RADIUS = "radius";
-    private RadioButton size10,size30,size50,size100;
-    private RadioGroup radiusSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.notificationSwitch = findViewById(R.id.toggle_notification);
         this.radiusSize = findViewById(R.id.radius_group);
@@ -45,25 +51,21 @@ public class PreferencesActivity extends AppCompatActivity {
         this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
 
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         if (this.sharedPreferences.getString(KEY_SWITCH, "").equals("on")) {
             this.notificationSwitch.setChecked(true);
         } else {
             this.notificationSwitch.setChecked(false);
         }
 
-        if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("10000")){
+        if (this.sharedPreferences.getString(KEY_RADIUS, "").equals("10000")) {
             this.size10.setChecked(true);
-        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("30000")){
+        } else if (this.sharedPreferences.getString(KEY_RADIUS, "").equals("30000")) {
             this.size30.setChecked(true);
-        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("50000")){
+        } else if (this.sharedPreferences.getString(KEY_RADIUS, "").equals("50000")) {
             this.size50.setChecked(true);
-        }else if(this.sharedPreferences.getString(KEY_RADIUS,"").equals("100000")){
+        } else if (this.sharedPreferences.getString(KEY_RADIUS, "").equals("100000")) {
             this.size100.setChecked(true);
-        }else{
+        } else {
             this.size30.setChecked(true);
         }
 
@@ -84,14 +86,14 @@ public class PreferencesActivity extends AppCompatActivity {
         this.radiusSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                if(id == size10.getId()){
-                    editor.putString(KEY_RADIUS,"10000");
-                }else if(id == size30.getId()){
-                    editor.putString(KEY_RADIUS,"30000");
-                }else if(id == size50.getId()){
-                    editor.putString(KEY_RADIUS,"50000");
-                }else if(id == size100.getId()){
-                    editor.putString(KEY_RADIUS,"100000");
+                if (id == size10.getId()) {
+                    editor.putString(KEY_RADIUS, "10000");
+                } else if (id == size30.getId()) {
+                    editor.putString(KEY_RADIUS, "30000");
+                } else if (id == size50.getId()) {
+                    editor.putString(KEY_RADIUS, "50000");
+                } else if (id == size100.getId()) {
+                    editor.putString(KEY_RADIUS, "100000");
                 }
                 editor.commit();
             }

@@ -34,8 +34,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
-        mapFragment.getMapAsync(this);
+        this.mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
+        this.mapFragment.getMapAsync(this);
 
         Intent coordinatesIntent = getIntent();
 
@@ -63,11 +63,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (id == R.id.action_settings) {
             Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
             startActivity(intent);
-        }else if(id == R.id.action_favourite){
-            Intent intent = new Intent(getApplicationContext(),FavoritesRestaurants.class);
+        } else if (id == R.id.action_favourite) {
+            Intent intent = new Intent(getApplicationContext(), FavoritesRestaurants.class);
             startActivity(intent);
-        }else if(id == R.id.action_historic){
-            Intent intent = new Intent(getApplicationContext(),HistoricActivity.class);
+        } else if (id == R.id.action_historic) {
+            Intent intent = new Intent(getApplicationContext(), HistoricActivity.class);
             startActivity(intent);
         }
 

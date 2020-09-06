@@ -28,11 +28,11 @@ import ipp.estg.restaurantfinder.db.RestaurantRoom;
 public class FavoritesRestaurantList extends Fragment {
 
     private Context context;
-    private FavoriteRestaurantAdapter favoriteRestaurantAdapter;
+    private RestaurantDB db;
     private RecyclerView recyclerView;
     private List<RestaurantRoom> favoriteRestaurants;
+    private FavoriteRestaurantAdapter favoriteRestaurantAdapter;
     private final ExecutorService databaseReadExecutor = Executors.newFixedThreadPool(1);
-    private RestaurantDB db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +49,8 @@ public class FavoritesRestaurantList extends Fragment {
 
         this.recyclerView = contentView.findViewById(R.id.restaurantsRecyclerView);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         this.getRestaurants();
-
         this.favoriteRestaurantAdapter = new FavoriteRestaurantAdapter(this.context, this.favoriteRestaurants);
-
         this.recyclerView.setAdapter(this.favoriteRestaurantAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
@@ -62,7 +59,6 @@ public class FavoritesRestaurantList extends Fragment {
     }
 
     private void getRestaurants() {
-
         db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseReadExecutor.execute(() -> {
             favoriteRestaurants.addAll(Arrays.asList(db.daoAccess().getAll()));

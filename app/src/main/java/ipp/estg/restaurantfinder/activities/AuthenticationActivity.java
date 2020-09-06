@@ -41,28 +41,28 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_layout);
 
-        loginEmail = findViewById(R.id.loginEmail);
-        loginPassword = findViewById(R.id.loginPassword);
-        loginButton = findViewById(R.id.loginButton);
-        signupButton = findViewById(R.id.signupButton);
-        forgotPassword = findViewById(R.id.forgotPasswordTextView);
+        this.loginEmail = findViewById(R.id.loginEmail);
+        this.loginPassword = findViewById(R.id.loginPassword);
+        this.loginButton = findViewById(R.id.loginButton);
+        this.signupButton = findViewById(R.id.signupButton);
+        this.forgotPassword = findViewById(R.id.forgotPasswordTextView);
         this.firebaseAuth = FirebaseAuth.getInstance();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        this.loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signIn(loginEmail.getText().toString(), loginPassword.getText().toString());
             }
         });
 
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
+        this.forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 forgotPasswordDialog();
             }
         });
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
+        this.signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent signupIntent = new Intent(getApplicationContext(), SignUpActivity.class);
@@ -72,7 +72,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void forgotPasswordDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle("Request new password");
 
         LayoutInflater inflater = getLayoutInflater();
@@ -111,7 +111,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void loginDialog(String titleMsg, String textMsg, String textButton) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle(titleMsg);
 
         LayoutInflater inflater = getLayoutInflater();
@@ -141,7 +141,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "To reset your password, check your email.", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "Invalid email, please try again", Toast.LENGTH_LONG).show();

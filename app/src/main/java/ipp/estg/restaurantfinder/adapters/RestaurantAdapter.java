@@ -34,14 +34,13 @@ import ipp.estg.restaurantfinder.models.Restaurants;
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder> implements Filterable {
 
     private Context context;
+    private RestaurantDB db;
     private List<Restaurants> restaurants;
     private List<Restaurants> allRestaurants;
-    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
-    private RestaurantDB db;
     private List<RestaurantRoom> favorites;
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
 
     private void makeFavorite(RestaurantRoom restaurantRoom) {
-
         db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().insertRestaurant(restaurantRoom);
@@ -63,10 +62,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     @NonNull
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View restaurantView = inflater.inflate(R.layout.restaurant_list_layout, parent, false);
 
         return new RestaurantViewHolder(restaurantView);
@@ -74,7 +71,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
     @Override
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
-
         Restaurants restaurant = this.restaurants.get(position);
 
         Button call_button = holder.call;
@@ -153,14 +149,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         protected FilterResults performFiltering(CharSequence charSequence) {
             List<Restaurants> filteredRestaurants = new ArrayList<>();
 
-            if(charSequence == null || charSequence.length() == 0) {
+            if (charSequence == null || charSequence.length() == 0) {
                 filteredRestaurants.addAll(allRestaurants);
                 restaurants.addAll(allRestaurants);
             } else {
                 String cuisineType = charSequence.toString().toLowerCase().trim();
 
-                for(Restaurants restaurant: allRestaurants) {
-                    if(restaurant.getRestaurant().getCuisines().toLowerCase().contains(cuisineType)) {
+                for (Restaurants restaurant : allRestaurants) {
+                    if (restaurant.getRestaurant().getCuisines().toLowerCase().contains(cuisineType)) {
                         filteredRestaurants.add(restaurant);
                     }
                 }
@@ -182,25 +178,26 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView address, name;
         public Button call;
-        public ImageView photo, favorite;
+        public TextView name;
+        public TextView address;
+        public ImageView photo;
+        public ImageView favorite;
 
         public RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            address = itemView.findViewById(R.id.restaurant_address);
-            name = itemView.findViewById(R.id.restaurant_name);
-            photo = itemView.findViewById(R.id.restaurant_icon);
-            call = itemView.findViewById(R.id.call_button);
-            favorite = itemView.findViewById(R.id.isFavoriteOrNot);
+            this.address = itemView.findViewById(R.id.restaurant_address);
+            this.name = itemView.findViewById(R.id.restaurant_name);
+            this.photo = itemView.findViewById(R.id.restaurant_icon);
+            this.call = itemView.findViewById(R.id.call_button);
+            this.favorite = itemView.findViewById(R.id.isFavoriteOrNot);
         }
     }
 
     private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
-
-        private ImageView imageView;
         private ImageView favorite;
+        private ImageView imageView;
 
         public GetRestaurantImage(ImageView imageView, ImageView favorite) {
             this.imageView = imageView;
@@ -214,7 +211,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         @Override
         protected Bitmap doInBackground(String... strings) {
             Bitmap bitmap = null;
-
 
             if (imageView != null) {
                 if (check(strings[1])) {

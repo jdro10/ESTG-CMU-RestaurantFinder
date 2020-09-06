@@ -2,7 +2,6 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -37,7 +36,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
-import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
@@ -78,7 +76,7 @@ public class RestaurantsList extends Fragment {
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         setHasOptionsMenu(true);
         this.sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        this.radius = this.sharedPreferences.getString(KEY_RADIUS,"");
+        this.radius = this.sharedPreferences.getString(KEY_RADIUS, "");
 
         this.getLastLocation();
     }
@@ -90,9 +88,7 @@ public class RestaurantsList extends Fragment {
 
         this.recyclerView = contentView.findViewById(R.id.restaurantsRecyclerView);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(contentView.getContext()));
-
         this.getRestaurants();
-
         this.restaurantAdapter = new RestaurantAdapter(this.context, new ArrayList<>(), this.favoriteRestaurantsList);
         this.recyclerView.setAdapter(this.restaurantAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
@@ -122,32 +118,31 @@ public class RestaurantsList extends Fragment {
         });
     }
 
-    private void getRestaurants(){
-
-        db = Room.databaseBuilder(context, RestaurantDB.class,"RestaurantsDB").build();
+    private void getRestaurants() {
+        db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
         databaseReadExecutor.execute(() -> {
             favoriteRestaurantsList.addAll(Arrays.asList(db.daoAccess().getAll()));
         });
     }
 
     private void getLastLocation() {
-        if(ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions();
             return;
         }
 
-        fusedLocationProviderClient.getLastLocation()
+        this.fusedLocationProviderClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null){
-                    latitude = String.valueOf(location.getLatitude());
-                    longitude = String.valueOf(location.getLongitude());
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            latitude = String.valueOf(location.getLatitude());
+                            longitude = String.valueOf(location.getLongitude());
 
-                    getRestaurantsFromAPI(latitude, longitude, Integer.parseInt(radius));
-                }
-            }
-        }).addOnFailureListener(getActivity(), new OnFailureListener() {
+                            getRestaurantsFromAPI(latitude, longitude, Integer.parseInt(radius));
+                        }
+                    }
+                }).addOnFailureListener(getActivity(), new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(context, "Couldn't get your location. Try again later!", Toast.LENGTH_LONG).show();
@@ -156,11 +151,10 @@ public class RestaurantsList extends Fragment {
     }
 
     private void requestPermissions() {
-        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
     }
 
     private void getRestaurantsFromAPI(String latitude, String longitude, int radius) {
-
         ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
 
         Call<SearchResponse> call = zomatoapi.getNearbyRestaurants(latitude, longitude, String.valueOf(radius));

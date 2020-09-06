@@ -8,22 +8,18 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -53,9 +49,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_NOTIFICATION;
-import static ipp.estg.restaurantfinder.activities.PreferencesActivity.SHARED_PREF_NAME;
-
 public class LocationService extends Service {
 
     private Context context;
@@ -69,11 +62,9 @@ public class LocationService extends Service {
     private Bitmap restaurantBitmap;
     public static final String CHANNEL_ID = "LocationService";
 
-
     @Override
     public void onCreate() {
         super.onCreate();
-
 
         this.createNotificationChannel();
         this.favoriteRestaurantsList = new ArrayList<>();
@@ -89,7 +80,7 @@ public class LocationService extends Service {
 
         Date currentTime = Calendar.getInstance().getTime();
 
-        locationCallback = new LocationCallback() {
+        this.locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
@@ -155,7 +146,7 @@ public class LocationService extends Service {
             return;
         }
 
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        this.fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     @Nullable
@@ -165,7 +156,6 @@ public class LocationService extends Service {
     }
 
     private void getRestaurants() {
-
         db = Room.databaseBuilder(this.context, RestaurantDB.class, "RestaurantsDB").build();
         databaseReadExecutor.execute(() -> {
             favoriteRestaurantsList.addAll(Arrays.asList(db.daoAccess().getAll()));

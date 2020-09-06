@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signupDialog(String titleMsg, String textMsg, String textButton) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle(titleMsg);
 
         LayoutInflater inflater = getLayoutInflater();

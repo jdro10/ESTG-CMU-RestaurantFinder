@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +55,6 @@ import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.adapters.ReviewAdapter;
 import ipp.estg.restaurantfinder.db.HistoricDB;
 import ipp.estg.restaurantfinder.db.HistoricRoom;
-import ipp.estg.restaurantfinder.db.RestaurantDB;
-import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
 import ipp.estg.restaurantfinder.interfaces.ZomatoApi;
@@ -68,14 +65,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RestaurantDetails extends Fragment {
-    private Context context;
 
+    DatabaseReference ref;
+    private Context context;
     private TextView restaurant_selected;
     private ImageView restaurantImage;
     private Button mapButton, rateButton;
     private Button menuButton;
     private Location location;
-    DatabaseReference ref;
     private String restaurantName;
     private int cleanRateNumber, foodRateNumber = 0;
     private RadioGroup foodRate;
@@ -97,14 +94,11 @@ public class RestaurantDetails extends Fragment {
     private TextView cleanRateText, foodRateText, avgRateText;
     private RatingBar ratingbar;
     private String food;
-    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
     private String menuUrl;
-
+    private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
 
     private void makeHistoric(HistoricRoom historicRoom) {
-
-        Log.d("ENTREI AQUI MANUUUU","yah manuh");
         db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
         databaseWriterExecutor.execute(() -> {
             db.daoAccess().insertHistoric(historicRoom);
@@ -117,9 +111,9 @@ public class RestaurantDetails extends Fragment {
 
         this.context = getActivity();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        ref = database.getReference("reviews");
-        reviewList = new ArrayList<>();
-        restaurantID = getActivity().getIntent().getExtras().getString("res_id");
+        this.ref = database.getReference("reviews");
+        this.reviewList = new ArrayList<>();
+        this.restaurantID = getActivity().getIntent().getExtras().getString("res_id");
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         getLastLocation();
     }
@@ -128,7 +122,7 @@ public class RestaurantDetails extends Fragment {
     public void onStart() {
         super.onStart();
 
-        ref.addValueEventListener(new ValueEventListener() {
+        this.ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 reviewList.clear();
@@ -146,11 +140,6 @@ public class RestaurantDetails extends Fragment {
                 }
                 meanClean = totalRateClean / countClean;
                 meanFood = totalRateFood / countFood;
-
-                Log.d("VALORES", "total pontuaçao tacho = " + totalRateFood + " /   " + "total votos " + countFood);
-
-                Log.d("VALORES", meanClean + " / " + meanFood);
-
             }
 
             @Override
@@ -165,26 +154,23 @@ public class RestaurantDetails extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.restaurant_layout, container, false);
 
-        restaurant_selected = contentView.findViewById(R.id.restaurant_selected);
-        restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
-        mapButton = contentView.findViewById(R.id.open_restaurant_map);
-        rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
-        ratingbar = contentView.findViewById(R.id.ratingBar);
-        cleanRateText = contentView.findViewById(R.id.clean_rate);
-        foodRateText = contentView.findViewById(R.id.food_rate);
-        avgRateText = contentView.findViewById(R.id.avg_rate);
-        menuButton = contentView.findViewById(R.id.check_menu_restaurant);
-
+        this.restaurant_selected = contentView.findViewById(R.id.restaurant_selected);
+        this.restaurantImage = contentView.findViewById(R.id.restaurant_selected_image);
+        this.mapButton = contentView.findViewById(R.id.open_restaurant_map);
+        this.rateButton = contentView.findViewById(R.id.rate_restaurant_selected);
+        this.ratingbar = contentView.findViewById(R.id.ratingBar);
+        this.cleanRateText = contentView.findViewById(R.id.clean_rate);
+        this.foodRateText = contentView.findViewById(R.id.food_rate);
+        this.avgRateText = contentView.findViewById(R.id.avg_rate);
+        this.menuButton = contentView.findViewById(R.id.check_menu_restaurant);
         this.recyclerView = contentView.findViewById(R.id.classifications_restaurant_selected);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         this.reviewAdapter = new ReviewAdapter(this.context, this.reviewList);
         this.recyclerView.setAdapter(this.reviewAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
-
         Call<Restaurant> call = zomatoapi.getIndividualRestaurant(Objects.requireNonNull(restaurantID));
 
         call.enqueue(new Callback<Restaurant>() {
@@ -206,19 +192,16 @@ public class RestaurantDetails extends Fragment {
                     restaurantLatitude = Double.parseDouble(location.getLatitude());
                     restaurantLongitude = Double.parseDouble(location.getLongitude());
                     double distanceBetweenUserAndRestaurant = distance(restaurantLatitude, restaurantLongitude, currentLatitude, currentLongitude);
-                    Log.d("teste", distanceBetweenUserAndRestaurant + "");
+
                     if (distanceBetweenUserAndRestaurant > 100) {
                         rateButton.setEnabled(false);
                     }
 
                     double mean = (meanClean + meanFood) / 2;
 
-                    Log.d("teste", mean + "" + "AQUI" + meanClean);
-
                     foodRateText.setText("Food Rate: " + meanFood);
                     cleanRateText.setText("Clean Rate: " + meanClean);
                     avgRateText.setText("Average Rate: " + mean);
-
 
                     ratingbar.setRating((float) mean);
 
@@ -232,7 +215,7 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
-        menuButton.setOnClickListener(new View.OnClickListener() {
+        this.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent webViewintent = new Intent(getContext(), WebViewActivity.class);
@@ -241,7 +224,7 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
-        mapButton.setOnClickListener(new View.OnClickListener() {
+        this.mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent mapIntent = new Intent(getActivity(), MapActivity.class);
@@ -252,7 +235,7 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
-        rateButton.setOnClickListener(new View.OnClickListener() {
+        this.rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 rateDialog();
@@ -263,7 +246,7 @@ public class RestaurantDetails extends Fragment {
     }
 
     private void rateDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_NoActionBar);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
         alert.setTitle("Rate");
 
         LayoutInflater inflater = getLayoutInflater();
@@ -272,9 +255,9 @@ public class RestaurantDetails extends Fragment {
         EditText name = view.findViewById(R.id.person_name);
         EditText comment = view.findViewById(R.id.comment);
         Button submit = view.findViewById(R.id.submit_button);
-        foodRate = view.findViewById(R.id.food_group);
-        cleanRate = view.findViewById(R.id.clean_group);
-        mealChoosed = view.findViewById(R.id.meal_group);
+        this.foodRate = view.findViewById(R.id.food_group);
+        this.cleanRate = view.findViewById(R.id.clean_group);
+        this.mealChoosed = view.findViewById(R.id.meal_group);
         RadioButton food1 = view.findViewById(R.id.food1);
         RadioButton food2 = view.findViewById(R.id.food2);
         RadioButton food3 = view.findViewById(R.id.food3);
@@ -298,17 +281,16 @@ public class RestaurantDetails extends Fragment {
         AlertDialog dialog = alert.create();
         dialog.show();
 
-        mealChoosed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        this.mealChoosed.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                if(id == meal5.getId()){
+                if (id == meal5.getId()) {
                     foodEated.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     foodEated.setVisibility(View.INVISIBLE);
                 }
             }
         });
-
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,29 +325,27 @@ public class RestaurantDetails extends Fragment {
                         cleanRateNumber = 5;
                     }
 
-                    if(selectedMealChoosed == meal1.getId()){
+                    if (selectedMealChoosed == meal1.getId()) {
                         food = "HotDog";
-                    }else if(selectedMealChoosed == meal2.getId()){
+                    } else if (selectedMealChoosed == meal2.getId()) {
                         food = "Lasagna";
-                    }else if(selectedMealChoosed == meal3.getId()){
+                    } else if (selectedMealChoosed == meal3.getId()) {
                         food = "Pizza";
-                    }else if(selectedMealChoosed == meal4.getId()){
+                    } else if (selectedMealChoosed == meal4.getId()) {
                         food = "Hamburger";
-                    }else if(selectedMealChoosed == meal5.getId()){
+                    } else if (selectedMealChoosed == meal5.getId()) {
                         food = foodEated.getText().toString();
                     }
 
-                    if(food.equals("") || food == null){
+                    if (food.equals("") || food == null) {
                         food = "Not specified";
                     }
 
                     Calendar rightNow = Calendar.getInstance();
 
-                    String date = rightNow.get(Calendar.DAY_OF_MONTH) + "/" + rightNow.get(Calendar.MONTH) + "/" + rightNow.get(Calendar.YEAR) + "    "  + rightNow.get(Calendar.HOUR_OF_DAY) + ":" + rightNow.get(Calendar.MINUTE);
+                    String date = rightNow.get(Calendar.DAY_OF_MONTH) + "/" + rightNow.get(Calendar.MONTH) + "/" + rightNow.get(Calendar.YEAR) + "    " + rightNow.get(Calendar.HOUR_OF_DAY) + ":" + rightNow.get(Calendar.MINUTE);
 
-                    HistoricRoom historic  = new HistoricRoom(restaurantID,restaurantName,date,food,Double.parseDouble(numberKM.getText().toString()));
-                    Log.d("QUERO VER",historic.toString());
-                    /*Double.parseDouble(numberKM.getText().toString())*/
+                    HistoricRoom historic = new HistoricRoom(restaurantID, restaurantName, date, food, Double.parseDouble(numberKM.getText().toString()));
 
                     makeHistoric(historic);
 
@@ -376,19 +356,16 @@ public class RestaurantDetails extends Fragment {
                     comment.setText("");
                     reviewList.add(review);
                     reviewAdapter.notifyDataSetChanged();
-
                 } else {
                     Toast.makeText(context, "Please type restaurant review!", Toast.LENGTH_SHORT);
 
                 }
                 dialog.dismiss();
             }
-
         });
-
     }
-    private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
 
+    private class GetRestaurantImage extends AsyncTask<String, Void, Bitmap> {
 
         private ImageView imageView;
 
@@ -423,7 +400,7 @@ public class RestaurantDetails extends Fragment {
             return;
         }
 
-        fusedLocationProviderClient.getLastLocation()
+        this.fusedLocationProviderClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<android.location.Location>() {
                     @Override
                     public void onSuccess(android.location.Location location) {
