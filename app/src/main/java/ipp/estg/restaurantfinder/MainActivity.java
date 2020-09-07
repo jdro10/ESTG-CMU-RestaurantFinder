@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     ImageView image ;
     private static final int CAMERA_PIC_REQUEST = 1337;
-    private StorageTask mUploadTask;
     private Uri mImageUri;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRefUpload = storage.getReference();
@@ -252,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(nomePessoa.getText().toString()) && !TextUtils.isEmpty(comentario.getText().toString())) {
 
             String id = ref.push().getKey();
-            Review review = new Review(nomePessoa.getText().toString(), "algum restaurante", comentario.getText().toString(), 5, 5);
+            Review review = new Review(nomePessoa.getText().toString(), "algum restaurante", comentario.getText().toString(), 5, 5,"");
             ref.child(id).setValue(review);
             nomePessoa.setText("");
             comentario.setText("");
