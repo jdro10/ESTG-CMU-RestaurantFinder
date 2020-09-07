@@ -7,9 +7,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +40,7 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
     private int lastRestaurantID = 0;
     private FirebaseAuth auth;
     private FirebaseUser user;
+    private int saveId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,13 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        this.recreate();
+        this.overridePendingTransition(0, 0);
     }
 
     private boolean isTablet() {
@@ -126,20 +137,33 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
     }
 
     private void startService() {
-        this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String strNotification = this.sharedPreferences.getString(KEY_NOTIFICATION, "");
+        if(!isLocationServiceRunning(LocationService.class)) {
+            this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+            String strNotification = this.sharedPreferences.getString(KEY_NOTIFICATION, "");
 
-        if (strNotification.equals("true")) {
-            Intent serviceIntent = new Intent(this, LocationService.class);
-            startService(serviceIntent);
-        } else {
-            Toast.makeText(getApplicationContext(), "Unable to notify you about your near favorite restaurants", Toast.LENGTH_LONG).show();
+            if (strNotification.equals("true")) {
+                Intent serviceIntent = new Intent(this, LocationService.class);
+                startService(serviceIntent);
+            } else {
+                Toast.makeText(getApplicationContext(), "Unable to notify you about your near favorite restaurants", Toast.LENGTH_LONG).show();
+            }
         }
+    }
+
+    private boolean isLocationServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void restaurantId(int id) {
         if(isTablet()) {
+            this.saveId = id;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.newFragment2, new RestaurantDetails(String.valueOf(id)));
             transaction.addToBackStack(null);
