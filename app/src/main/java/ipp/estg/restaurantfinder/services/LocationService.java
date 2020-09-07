@@ -126,14 +126,11 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("RestaurantFinder")
                 .setContentText("We are currently looking for your nearby favorite restaurants!")
                 .setSmallIcon(R.drawable.restaurant_icon)
-                .setContentIntent(pendingIntent)
                 .build();
 
         startForeground(1, notification);
