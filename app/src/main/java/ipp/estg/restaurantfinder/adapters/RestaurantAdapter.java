@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +41,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private List<Restaurants> allRestaurants;
     private List<RestaurantRoom> favorites;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private RestaurantAdapterListener restaurantAdapterListener;
+
+    public interface RestaurantAdapterListener {
+        void onClick(int position);
+    }
 
     private void makeFavorite(RestaurantRoom restaurantRoom) {
         db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
@@ -47,11 +54,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         });
     }
 
-    public RestaurantAdapter(Context context, List<Restaurants> restaurants, List<RestaurantRoom> favorites) {
+    public RestaurantAdapter(Context context, List<Restaurants> restaurants, List<RestaurantRoom> favorites, RestaurantAdapterListener restaurantAdapterListener) {
         this.context = context;
         this.restaurants = restaurants;
         this.favorites = favorites;
         this.allRestaurants = restaurants;
+        this.restaurantAdapterListener = restaurantAdapterListener;
     }
 
     public void setRestaurants(List<Restaurants> restaurants) {
@@ -68,6 +76,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         return new RestaurantViewHolder(restaurantView);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
@@ -100,10 +109,15 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("res_id", restaurant.getRestaurant().getId());
-                intent.putExtra("thumb", restaurant.getRestaurant().getThumb());
-                context.startActivity(intent);
+                if(isTablet()) {
+                    restaurantAdapterListener.onClick(Integer.parseInt(restaurant.getRestaurant().getId()));
+                } else {
+                    Intent intent = new Intent(context, RestaurantSelected.class);
+                    restaurantAdapterListener.onClick(Integer.parseInt(restaurant.getRestaurant().getId()));
+                    intent.putExtra("res_id", restaurant.getRestaurant().getId());
+                    intent.putExtra("thumb", restaurant.getRestaurant().getThumb());
+                    context.startActivity(intent);
+                }
             }
         });
 
@@ -122,6 +136,20 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
                 favorite.setImageResource(R.drawable.favorite);
             }
         });
+    }
+
+    private boolean isTablet() {
+        DisplayMetrics metrics = this.context.getResources().getDisplayMetrics();
+
+        float yInches= metrics.heightPixels/metrics.ydpi;
+        float xInches= metrics.widthPixels/metrics.xdpi;
+        double diagonalInches = Math.sqrt(xInches * xInches + yInches *yInches);
+
+        if (diagonalInches>= 7){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override
