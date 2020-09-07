@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import ipp.estg.restaurantfinder.R;
 
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_USER_EMAIL;
@@ -20,6 +23,8 @@ public class RestaurantSelected extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,19 @@ public class RestaurantSelected extends AppCompatActivity {
 
         this.sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -64,6 +82,7 @@ public class RestaurantSelected extends AppCompatActivity {
         } else if(id == R.id.action_signout) {
             this.editor.putString(KEY_USER_EMAIL, null);
             this.editor.commit();
+            this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }

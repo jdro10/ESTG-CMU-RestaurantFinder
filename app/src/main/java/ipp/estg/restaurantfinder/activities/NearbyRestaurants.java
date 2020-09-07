@@ -16,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.fragments.RestaurantDetails;
 import ipp.estg.restaurantfinder.fragments.RestaurantsList;
@@ -32,6 +35,8 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
     private RestaurantsList restaurantsList;
     private RestaurantDetails restaurantDetails;
     private int lastRestaurantID = 0;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,19 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
         if(isTablet()){
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.newFragment1, this.restaurantsList).commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -99,6 +117,7 @@ public class NearbyRestaurants extends AppCompatActivity implements RestaurantsL
         } else if(id == R.id.action_signout) {
             this.editor.putString(KEY_USER_EMAIL, null);
             this.editor.commit();
+            this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }

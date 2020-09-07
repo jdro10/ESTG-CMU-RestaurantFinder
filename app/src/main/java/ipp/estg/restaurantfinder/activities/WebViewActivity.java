@@ -10,6 +10,9 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import ipp.estg.restaurantfinder.R;
 
 public class WebViewActivity extends AppCompatActivity {
@@ -18,6 +21,8 @@ public class WebViewActivity extends AppCompatActivity {
     private TextView urlTextView;
     private ImageView closeImage;
     private String urlIntent;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,5 +52,18 @@ public class WebViewActivity extends AppCompatActivity {
         });
 
         this.web.loadUrl(this.urlIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
+        }
     }
 }
