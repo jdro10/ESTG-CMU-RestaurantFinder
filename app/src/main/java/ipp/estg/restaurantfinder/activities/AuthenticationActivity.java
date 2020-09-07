@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
 
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_RADIUS;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -41,7 +42,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -101,6 +106,11 @@ public class RestaurantDetails extends Fragment {
     private String menuUrl;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private String restaurantIDF;
+    private static final int CAMERA_PIC_REQUEST = 1337;
+    StorageReference uploadRef;
+    FirebaseStorage storage ;
+    StorageReference storageRefUpload ;
+    String imageRef;
 
     public String getRestaurantIDF() {
         return restaurantIDF;
@@ -115,7 +125,7 @@ public class RestaurantDetails extends Fragment {
     }
 
     public RestaurantDetails(){}
-
+    
     private void makeHistoric(HistoricRoom historicRoom) {
         db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
         databaseWriterExecutor.execute(() -> {
@@ -129,6 +139,8 @@ public class RestaurantDetails extends Fragment {
 
         //this.restaurantIDF = "0";
         this.context = getActivity();
+        storage = FirebaseStorage.getInstance();
+        storageRefUpload = storage.getReference("reviews");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         this.ref = database.getReference("reviews");
         this.reviewList = new ArrayList<>();
@@ -161,7 +173,8 @@ public class RestaurantDetails extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+      
+        imageRef = "";
         this.ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -187,6 +200,13 @@ public class RestaurantDetails extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 
     @Nullable
@@ -261,6 +281,7 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
+
         this.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -321,6 +342,7 @@ public class RestaurantDetails extends Fragment {
         RadioButton meal5 = view.findViewById(R.id.meal5);
         EditText numberKM = view.findViewById(R.id.number_kms);
         EditText foodEated = view.findViewById(R.id.food_eated);
+        Button takeAPick = view.findViewById(R.id.take_a_pick);
 
         alert.setView(view);
 
@@ -335,6 +357,14 @@ public class RestaurantDetails extends Fragment {
                 } else {
                     foodEated.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        takeAPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
             }
         });
 
@@ -396,7 +426,7 @@ public class RestaurantDetails extends Fragment {
                     makeHistoric(historic);
 
                     String id = ref.push().getKey();
-                    Review review = new Review(name.getText().toString(), restaurantID, comment.getText().toString(), foodRateNumber, cleanRateNumber);
+                    Review review = new Review(name.getText().toString(), restaurantID, comment.getText().toString(), foodRateNumber, cleanRateNumber, imageRef);
                     ref.child(id).setValue(review);
                     name.setText("");
                     comment.setText("");
@@ -487,4 +517,35 @@ public class RestaurantDetails extends Fragment {
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_PIC_REQUEST) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data2 = baos.toByteArray();
+            imageRef = String.valueOf(System.currentTimeMillis());
+            uploadRef = storageRefUpload.child(imageRef);
+
+            UploadTask uploadTask = uploadRef.putBytes(data2);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                }
+            });
+
+        }
+    }
+
+
 }
