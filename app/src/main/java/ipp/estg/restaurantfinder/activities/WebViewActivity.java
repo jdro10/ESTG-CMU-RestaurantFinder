@@ -43,7 +43,7 @@ public class WebViewActivity extends AppCompatActivity {
         });
 
         this.web = (WebView) findViewById(R.id.webView);
-        this.web.getSettings().setJavaScriptEnabled(false);
+        this.web.getSettings().setJavaScriptEnabled(true);
 
         this.web.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {

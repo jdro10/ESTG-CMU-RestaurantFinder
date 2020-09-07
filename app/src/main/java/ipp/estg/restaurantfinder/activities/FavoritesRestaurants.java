@@ -65,6 +65,13 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        this.recreate();
+        this.overridePendingTransition(0, 0);
+    }
+
     private boolean isTablet() {
         DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
 

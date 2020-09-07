@@ -232,6 +232,7 @@ public class RestaurantDetails extends Fragment {
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
 
         ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
+
         Call<Restaurant> call = zomatoapi.getIndividualRestaurant(Objects.requireNonNull(restaurantID));
 
         call.enqueue(new Callback<Restaurant>() {

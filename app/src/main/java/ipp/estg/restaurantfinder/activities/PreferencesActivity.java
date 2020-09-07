@@ -136,6 +136,7 @@ public class PreferencesActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
+
         return true;
     }
 
