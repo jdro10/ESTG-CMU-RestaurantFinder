@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,12 +105,27 @@ public class RestaurantDetails extends Fragment {
     private HistoricDB db;
     private String menuUrl;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private String restaurantIDF;
     private static final int CAMERA_PIC_REQUEST = 1337;
     StorageReference uploadRef;
     FirebaseStorage storage ;
     StorageReference storageRefUpload ;
     String imageRef;
 
+    public String getRestaurantIDF() {
+        return restaurantIDF;
+    }
+
+    public void setRestaurantIDF(String restaurantIDF) {
+        this.restaurantIDF = restaurantIDF;
+    }
+
+    public RestaurantDetails(String restaurantIDF){
+        this.restaurantIDF = restaurantIDF;
+    }
+
+    public RestaurantDetails(){}
+    
     private void makeHistoric(HistoricRoom historicRoom) {
         db = Room.databaseBuilder(context, HistoricDB.class, "HistoricsDB").build();
         databaseWriterExecutor.execute(() -> {
@@ -121,16 +137,43 @@ public class RestaurantDetails extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //this.restaurantIDF = "0";
         this.context = getActivity();
         storage = FirebaseStorage.getInstance();
         storageRefUpload = storage.getReference("reviews");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         this.ref = database.getReference("reviews");
         this.reviewList = new ArrayList<>();
-        this.restaurantID = getActivity().getIntent().getExtras().getString("res_id");
+
+        if(isTablet()){
+            this.restaurantID = this.restaurantIDF;
+        } else{
+            this.restaurantID = getActivity().getIntent().getExtras().getString("res_id");
+        }
+
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.getApplicationContext());
         getLastLocation();
+    }
 
+    private boolean isTablet() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        float yInches= metrics.heightPixels/metrics.ydpi;
+        float xInches= metrics.widthPixels/metrics.xdpi;
+        double diagonalInches = Math.sqrt(xInches * xInches + yInches *yInches);
+
+        if (diagonalInches>= 7){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+      
         imageRef = "";
         this.ref.addValueEventListener(new ValueEventListener() {
             @Override

@@ -3,9 +3,12 @@ package ipp.estg.restaurantfinder.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,10 +41,15 @@ public class AuthenticationActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private static final int REQUEST_FINE_LOCATION = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+        }
 
         try {
             this.getSupportActionBar().hide();
@@ -85,6 +93,10 @@ public class AuthenticationActivity extends AppCompatActivity {
                 startActivity(signupIntent);
             }
         });
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
     }
 
     private void forgotPasswordDialog() {

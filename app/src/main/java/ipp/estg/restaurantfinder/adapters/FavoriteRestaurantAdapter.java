@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,11 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
     private List<RestaurantRoom> restaurants;
     private RestaurantDB db;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
+    private FavoriteRestaurantListener listener;
+
+    public interface FavoriteRestaurantListener {
+        void onClick(int position);
+    }
 
     private void deleteRestaurants(String id) {
         db = Room.databaseBuilder(context, RestaurantDB.class, "RestaurantsDB").build();
@@ -41,9 +47,10 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         });
     }
 
-    public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants) {
+    public FavoriteRestaurantAdapter(Context context, List<RestaurantRoom> restaurants, FavoriteRestaurantListener listener) {
         this.context = context;
         this.restaurants = restaurants;
+        this.listener = listener;
     }
 
     @NonNull
@@ -79,9 +86,14 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, RestaurantSelected.class);
-                intent.putExtra("res_id", restaurant.getId());
-                context.startActivity(intent);
+                if(isTablet()) {
+                    listener.onClick(Integer.parseInt(restaurant.getId()));
+                } else {
+                    Intent intent = new Intent(context, RestaurantSelected.class);
+                    listener.onClick(Integer.parseInt(restaurant.getId()));
+                    intent.putExtra("res_id", restaurant.getId());
+                    context.startActivity(intent);
+                }
             }
         });
 
@@ -102,6 +114,20 @@ public class FavoriteRestaurantAdapter extends RecyclerView.Adapter<FavoriteRest
                 context.startActivity(phoneIntent);
             }
         });
+    }
+
+    private boolean isTablet() {
+        DisplayMetrics metrics = this.context.getResources().getDisplayMetrics();
+
+        float yInches= metrics.heightPixels/metrics.ydpi;
+        float xInches= metrics.widthPixels/metrics.xdpi;
+        double diagonalInches = Math.sqrt(xInches * xInches + yInches *yInches);
+
+        if (diagonalInches>= 7){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

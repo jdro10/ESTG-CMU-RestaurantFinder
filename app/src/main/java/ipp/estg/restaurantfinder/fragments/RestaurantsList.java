@@ -2,16 +2,20 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -19,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
@@ -47,10 +53,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import androidx.fragment.app.FragmentTransaction;
+
 import static android.content.Context.MODE_PRIVATE;
 import static ipp.estg.restaurantfinder.activities.PreferencesActivity.KEY_RADIUS;
 
-public class RestaurantsList extends Fragment {
+public class RestaurantsList extends Fragment implements RestaurantAdapter.RestaurantAdapterListener {
 
     private Context context;
     private RestaurantAdapter restaurantAdapter;
@@ -68,6 +76,11 @@ public class RestaurantsList extends Fragment {
     public static final String KEY_RADIUS = "radius";
     private String radius;
     private SharedPreferences.Editor editor;
+    private RestaurantsListFragmentListener listener;
+
+    public interface RestaurantsListFragmentListener {
+        void restaurantId(int id);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,14 +93,18 @@ public class RestaurantsList extends Fragment {
         this.sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
 
-        if(this.sharedPreferences.getString(KEY_RADIUS, null) == null){
+        if (this.sharedPreferences.getString(KEY_RADIUS, null) == null) {
             this.editor.putString(KEY_RADIUS, "10000");
             this.editor.apply();
         }
 
         this.radius = this.sharedPreferences.getString(KEY_RADIUS, "");
 
-        this.getLastLocation();
+        try {
+            this.getLastLocation();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -98,7 +115,7 @@ public class RestaurantsList extends Fragment {
         this.recyclerView = contentView.findViewById(R.id.restaurantsRecyclerView);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(contentView.getContext()));
         this.getRestaurants();
-        this.restaurantAdapter = new RestaurantAdapter(this.context, new ArrayList<>(), this.favoriteRestaurantsList);
+        this.restaurantAdapter = new RestaurantAdapter(this.context, new ArrayList<>(), this.favoriteRestaurantsList, this);
         this.recyclerView.setAdapter(this.restaurantAdapter);
         this.recyclerView.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
@@ -134,7 +151,7 @@ public class RestaurantsList extends Fragment {
         });
     }
 
-    private void getLastLocation() {
+    private void getLastLocation() throws InterruptedException {
         if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions();
             return;
@@ -159,8 +176,14 @@ public class RestaurantsList extends Fragment {
         });
     }
 
-    private void requestPermissions() {
+    private void requestPermissions() throws InterruptedException {
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+
+        if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Thread.sleep(1000);
+        }
+
+        getActivity().recreate();
     }
 
     private void getRestaurantsFromAPI(String latitude, String longitude, int radius) {
@@ -187,5 +210,28 @@ public class RestaurantsList extends Fragment {
                 Toast.makeText(context, "Error fetching data from Zomato, please try again later!", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onClick(int position) {
+        this.listener.restaurantId(position);
+        //Toast.makeText(getContext(), "" + position, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if(context instanceof RestaurantsListFragmentListener) {
+            listener = (RestaurantsListFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " tem de implementar a interface");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 }
