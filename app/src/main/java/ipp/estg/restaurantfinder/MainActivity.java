@@ -1,37 +1,48 @@
 package ipp.estg.restaurantfinder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import ipp.estg.restaurantfinder.activities.AuthenticationActivity;
-import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.activities.PreferencesActivity;
 import ipp.estg.restaurantfinder.activities.RestaurantSelected;
 
-import ipp.estg.restaurantfinder.activities.WebViewActivity;
 import ipp.estg.restaurantfinder.db.HistoricDB;
 import ipp.estg.restaurantfinder.db.HistoricRoom;
 import ipp.estg.restaurantfinder.db.Review;
 import ipp.estg.restaurantfinder.services.LocationService;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,14 +56,23 @@ public class MainActivity extends AppCompatActivity {
 
     private Button send,picture_btn,manda_foto;
     private TextView comentario,nomePessoa;
-    private Button send;
-    private TextView comentario, nomePessoa;
     DatabaseReference ref;
     private final ExecutorService databaseWriterExecutor = Executors.newFixedThreadPool(1);
     private HistoricDB db;
     private SharedPreferences sharedPreferences;
     ImageView image ;
     private static final int CAMERA_PIC_REQUEST = 1337;
+    private StorageTask mUploadTask;
+    private Uri mImageUri;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRefUpload = storage.getReference();
+    StorageReference mountainsRef;
+
+    StorageReference storageRefDownload = storage.getReference();
+    StorageReference pathReferenceDownload = storageRefDownload.child("1599433197613");
+    ImageView imageview;
+
+
 
 
     private void makeHistoric() {
@@ -69,20 +89,79 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_PIC_REQUEST) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
-            ImageView imageview = (ImageView) findViewById(R.id.picture_taken); //sets imageview as the bitmap
+
             imageview.setImageBitmap(image);
+
+
+            imageview.setDrawingCacheEnabled(true);
+            imageview.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) imageview.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data2 = baos.toByteArray();
+            mountainsRef = storageRefUpload.child(String.valueOf(System.currentTimeMillis()));
+
+            UploadTask uploadTask = mountainsRef.putBytes(data2);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                }
+            });
 
         }
     }
+
+    public void loadWithGlide() {
+        // [START storage_load_with_glide]
+        // Reference to an image file in Cloud Storage
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("mountains.jpg");
+
+        // ImageView in your Activity
+        ImageView imageView = findViewById(R.id.picture_taken);
+
+        // Download directly from StorageReference using Glide
+        // (See MyAppGlideModule for Loader registration)
+        Glide.with(this)
+                .load(storageReference)
+                .into(imageView);
+        // [END storage_load_with_glide]
+    }
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         makeHistoric();
 
+        imageview = (ImageView) findViewById(R.id.picture_taken);
+
+        try {
+            File localFile = File.createTempFile("tmp", ".jpg");
+            pathReferenceDownload.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Bitmap myBitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    imageview.setImageBitmap(myBitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         picture_btn = findViewById(R.id.picture_btn);
@@ -195,6 +274,14 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please enable notifications to use this service", Toast.LENGTH_LONG).show();
         }
     }
+
+    public Uri getImageUri(Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
 
 
 

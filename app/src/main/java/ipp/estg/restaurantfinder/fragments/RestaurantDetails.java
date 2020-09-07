@@ -223,6 +223,7 @@ public class RestaurantDetails extends Fragment {
             }
         });
 
+
         this.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
