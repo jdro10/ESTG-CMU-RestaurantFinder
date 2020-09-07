@@ -12,6 +12,9 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.adapters.FavoriteRestaurantAdapter;
 import ipp.estg.restaurantfinder.fragments.FavoritesRestaurantList;
@@ -26,6 +29,8 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private FavoritesRestaurantList favoritesRestaurantList;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,19 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
         if(isTablet()){
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.newFragment3, this.favoritesRestaurantList).commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -91,6 +109,7 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
         } else if(id == R.id.action_signout) {
             this.editor.putString(KEY_USER_EMAIL, null);
             this.editor.commit();
+            this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }

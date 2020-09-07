@@ -18,6 +18,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import ipp.estg.restaurantfinder.R;
 import ipp.estg.restaurantfinder.models.Location;
 import ipp.estg.restaurantfinder.services.LocationService;
@@ -39,6 +42,8 @@ public class PreferencesActivity extends AppCompatActivity {
     public static final String KEY_USER_EMAIL = "user_email";
     private static final String KEY_SWITCH = "switch";
     public static final String KEY_RADIUS = "radius";
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +116,19 @@ public class PreferencesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
+        }
+    }
+
     public static String getNotificationPreference(String key, Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(key, null);
     }
@@ -144,6 +162,7 @@ public class PreferencesActivity extends AppCompatActivity {
         } else if(id == R.id.action_signout) {
             this.editor.putString(KEY_USER_EMAIL, null);
             this.editor.commit();
+            this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }

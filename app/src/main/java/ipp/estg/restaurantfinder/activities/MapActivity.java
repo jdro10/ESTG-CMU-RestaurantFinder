@@ -16,6 +16,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import ipp.estg.restaurantfinder.R;
 
@@ -30,6 +32,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Double longitude;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         this.latitude = Double.parseDouble(coordinatesIntent.getStringExtra("latitude"));
         this.longitude = Double.parseDouble(coordinatesIntent.getStringExtra("longitude"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.auth = FirebaseAuth.getInstance();
+        this.user = this.auth.getCurrentUser();
+
+        if(this.user.getEmail() == null){
+            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -81,6 +98,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else if(id == R.id.action_signout) {
             this.editor.putString(KEY_USER_EMAIL, null);
             this.editor.commit();
+            this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
         }
