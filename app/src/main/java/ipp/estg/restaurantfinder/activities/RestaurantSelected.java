@@ -85,6 +85,9 @@ public class RestaurantSelected extends AppCompatActivity {
             this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
             startActivity(intent);
+        }else if(id == R.id.action_nearby){
+            Intent intent = new Intent(getApplicationContext(),NearbyRestaurants.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

@@ -18,7 +18,6 @@
         <activity android:name=".activities.PreferencesActivity" />
         <activity android:name=".activities.HistoricActivity" />
         <activity android:name=".activities.WebViewActivity" />
-        <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.MapActivity" />
         <activity android:name=".activities.RestaurantSelected" />
         <activity android:name=".activities.FavoritesRestaurants" />

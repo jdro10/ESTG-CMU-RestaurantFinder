@@ -65,12 +65,7 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        this.recreate();
-        this.overridePendingTransition(0, 0);
-    }
+
 
     private boolean isTablet() {
         DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
@@ -118,6 +113,9 @@ public class FavoritesRestaurants extends AppCompatActivity implements Favorites
             this.editor.commit();
             this.auth.signOut();
             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+            startActivity(intent);
+        }else if(id == R.id.action_nearby){
+            Intent intent = new Intent(getApplicationContext(),NearbyRestaurants.class);
             startActivity(intent);
         }
 

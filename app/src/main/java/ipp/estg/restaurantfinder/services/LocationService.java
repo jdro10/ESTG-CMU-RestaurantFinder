@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.FavoritesRestaurants;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
 import ipp.estg.restaurantfinder.helpers.RetrofitHelper;
