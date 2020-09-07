@@ -168,7 +168,7 @@ public class RestaurantsList extends Fragment {
 
         //Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsDistance(latitude, longitude, String.valueOf(radius), "real_distance");
 
-        Call<SearchResponse> call = zomatoapi.getNearbyRestaurants(latitude, longitude, String.valueOf(radius));
+        Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsDistance(latitude, longitude, String.valueOf(radius),"real_distance");
         this.searchResponseList = new ArrayList<>();
 
         call.enqueue(new Callback<SearchResponse>() {

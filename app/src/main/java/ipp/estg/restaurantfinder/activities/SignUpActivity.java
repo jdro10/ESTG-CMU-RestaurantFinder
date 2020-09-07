@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import ipp.estg.restaurantfinder.MainActivity;
 import ipp.estg.restaurantfinder.R;
 
 public class SignUpActivity extends AppCompatActivity {
