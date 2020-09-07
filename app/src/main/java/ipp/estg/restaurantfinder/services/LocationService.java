@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,17 +74,17 @@ public class LocationService extends Service {
         this.getRestaurants();
 
         this.locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        this.locationRequest.setInterval(1800000);
-        this.locationRequest.setFastestInterval(1800000);
+        this.locationRequest.setInterval(60000);
+        this.locationRequest.setFastestInterval(60000);
 
-        Date currentTime = Calendar.getInstance().getTime();
+        Calendar rightNow = Calendar.getInstance();
 
         this.locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    if ((currentTime.getHours() <= 11 && currentTime.getHours() <= 15) || currentTime.getHours() <= 18 && currentTime.getHours() <= 22) {
-                        getNearbyRestaurantFromAPI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), 50000);
+                    if ((rightNow.get(Calendar.HOUR_OF_DAY) <= 11 && rightNow.get(Calendar.HOUR_OF_DAY) <= 15) || (rightNow.get(Calendar.HOUR_OF_DAY) >= 18 && rightNow.get(Calendar.HOUR_OF_DAY) <= 22)) {
+                        getNearbyRestaurantFromAPI(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), 50000, "real_distance");
                     }
                 }
             }
@@ -94,9 +93,9 @@ public class LocationService extends Service {
         startLocationUpdates();
     }
 
-    private void getNearbyRestaurantFromAPI(String latitude, String longitude, int radius) {
+    private void getNearbyRestaurantFromAPI(String latitude, String longitude, int radius, String distance) {
         ZomatoApi zomatoapi = RetrofitHelper.getRetrofit().create(ZomatoApi.class);
-        Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsAsc(latitude, longitude, String.valueOf(radius), "asc");
+        Call<SearchResponse> call = zomatoapi.getNearbyRestaurantsDistance(latitude, longitude, String.valueOf(radius), "real_distance");
         this.restaurants = new ArrayList<>();
 
         call.enqueue(new Callback<SearchResponse>() {
