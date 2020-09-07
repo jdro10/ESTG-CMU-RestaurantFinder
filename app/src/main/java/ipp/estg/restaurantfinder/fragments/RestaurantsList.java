@@ -2,6 +2,7 @@ package ipp.estg.restaurantfinder.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -40,6 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ipp.estg.restaurantfinder.R;
+import ipp.estg.restaurantfinder.activities.NearbyRestaurants;
 import ipp.estg.restaurantfinder.adapters.RestaurantAdapter;
 import ipp.estg.restaurantfinder.db.RestaurantDB;
 import ipp.estg.restaurantfinder.db.RestaurantRoom;
@@ -98,7 +100,11 @@ public class RestaurantsList extends Fragment implements RestaurantAdapter.Resta
 
         this.radius = this.sharedPreferences.getString(KEY_RADIUS, "");
 
-        this.getLastLocation();
+        try {
+            this.getLastLocation();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -145,7 +151,7 @@ public class RestaurantsList extends Fragment implements RestaurantAdapter.Resta
         });
     }
 
-    private void getLastLocation() {
+    private void getLastLocation() throws InterruptedException {
         if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions();
             return;
@@ -170,8 +176,14 @@ public class RestaurantsList extends Fragment implements RestaurantAdapter.Resta
         });
     }
 
-    private void requestPermissions() {
+    private void requestPermissions() throws InterruptedException {
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+
+        if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Thread.sleep(1000);
+        }
+
+        getActivity().recreate();
     }
 
     private void getRestaurantsFromAPI(String latitude, String longitude, int radius) {
